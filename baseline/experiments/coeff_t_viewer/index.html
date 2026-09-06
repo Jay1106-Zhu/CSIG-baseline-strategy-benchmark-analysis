@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>coeff_t sweep | native / crop comparison</title>
+  <style>
+    :root { color-scheme: dark; --bg:#101315; --panel:#171b1e; --line:#30383d; --muted:#9aa7ad; --text:#f0f3f4; --accent:#79d6c0; --accent2:#f0bb70; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font:14px/1.4 "Segoe UI", "Microsoft YaHei", sans-serif; }
+    header { position:sticky; top:0; z-index:3; background:rgba(16,19,21,.96); border-bottom:1px solid var(--line); padding:18px 24px 14px; backdrop-filter:blur(10px); }
+    h1 { margin:0 0 4px; font-size:20px; letter-spacing:0; }
+    .subtitle { color:var(--muted); font-size:12px; }
+    .controls { display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; margin-top:14px; }
+    .group { display:flex; align-items:center; gap:7px; }
+    .label { color:var(--muted); font-size:12px; }
+    button, select, input { font:inherit; }
+    button, select { color:var(--text); background:#20272b; border:1px solid #3a464c; border-radius:6px; padding:7px 11px; cursor:pointer; }
+    button:hover, select:hover { border-color:var(--accent); }
+    button.active { color:#06251f; background:var(--accent); border-color:var(--accent); font-weight:700; }
+    button.secondary.active { color:#2a1b08; background:var(--accent2); border-color:var(--accent2); }
+    .check { display:flex; align-items:center; gap:6px; color:var(--muted); }
+    main { max-width:1800px; margin:0 auto; padding:20px 24px 50px; }
+    .status { display:flex; justify-content:space-between; gap:16px; align-items:baseline; margin-bottom:15px; }
+    .status strong { font-size:17px; }
+    .status span { color:var(--muted); font-size:12px; }
+    .overview { display:none; background:#0c0f10; border:1px solid var(--line); border-radius:8px; padding:10px; overflow:auto; }
+    .overview.active { display:block; }
+    .overview img { display:block; width:auto; max-width:none; }
+    .crop-grid { display:grid; gap:15px; }
+    .crop-row { background:var(--panel); border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+    .crop-row.selected { border-color:var(--accent2); box-shadow:0 0 0 1px rgba(240,187,112,.22); }
+    .row-head { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:9px 12px; border-bottom:1px solid var(--line); }
+    .row-head b { color:var(--accent2); font-size:16px; }
+    .row-head span { color:var(--muted); font-size:12px; }
+    .triptych { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:1px; background:var(--line); }
+    figure { margin:0; min-width:0; background:#0b0e0f; }
+    figcaption { padding:7px 10px; color:var(--muted); font-size:12px; background:#171b1e; }
+    figure img { display:block; width:100%; height:auto; }
+    .native { display:none; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; }
+    .native.active { display:grid; }
+    .native .viewport { min-width:0; height:min(72vh, 780px); overflow:auto; background:#090b0c; border:1px solid var(--line); border-radius:8px; }
+    .native .viewport img { display:block; max-width:none; transform-origin:top left; }
+    .native .panel-label { position:sticky; top:0; z-index:1; display:flex; justify-content:space-between; padding:7px 9px; background:rgba(23,27,30,.93); color:var(--muted); font-size:12px; }
+    .native .panel-label a { color:var(--accent); text-decoration:none; }
+    .native-tools { display:none; align-items:center; gap:12px; margin-bottom:10px; color:var(--muted); }
+    .native-tools.active { display:flex; }
+    .native-tools input { accent-color:var(--accent); width:180px; }
+    .native-tools output { min-width:42px; color:var(--text); }
+    .empty { padding:35px; text-align:center; color:var(--muted); }
+    @media (max-width:900px) { header { padding:14px 14px 12px; } main { padding:15px 14px 35px; } .native { grid-template-columns:1fr; } .triptych { grid-template-columns:1fr; } .status { align-items:flex-start; flex-direction:column; gap:3px; } }
+  </style>
+</head>
+<body>
+<header>
+  <h1>coeff_t sweep</h1>
+  <div class="subtitle">case1–case5 · LQ / HYPIR Output / Ground Truth · native resolution + matched crops</div>
+  <div class="controls">
+    <div class="group"><span class="label">Case</span><span id="caseButtons"></span></div>
+    <div class="group"><span class="label">Region</span><select id="regionSelect"></select></div>
+    <div class="group"><span class="label">View</span><button data-view="crops" class="view-button active">局部 crop</button><button data-view="overview" class="view-button">三联总览</button><button data-view="native" class="view-button">原尺寸</button></div>
+    <div class="group"><span class="label">Focus</span><span id="coeffButtons"></span></div>
+    <label class="check"><input id="syncScroll" type="checkbox" checked>同步滚动</label>
+  </div>
+</header>
+<main>
+  <div class="status"><strong id="title"></strong><span id="details"></span></div>
+  <div id="cropGrid" class="crop-grid"></div>
+  <div id="overview" class="overview"></div>
+  <div id="nativeTools" class="native-tools"><span>Zoom</span><input id="zoom" type="range" min="25" max="100" step="5" value="50"><output id="zoomValue">50%</output></div>
+  <div id="native" class="native"></div>
+</main>
+<script>
+const manifest = {"coeffTs":[200,150,100,75,50],"cases":[{"id":1,"size":[4096,3072],"raw":{"lq":"../../input/case1_lq.jpg","gt":"../../../csig_dataset/验证集/case1_gt.jpg","outputs":{"200":"../coeff_t_200/output/result/case1_lq.png","150":"../coeff_t_150/output/result/case1_lq.png","100":"../coeff_t_100/output/result/case1_lq.png","75":"../coeff_t_75/output/result/case1_lq.png","50":"../coeff_t_50/output/result/case1_lq.png"},"overviews":{"200":"../coeff_t_200/comparison/case1_lq_compare.png","150":"../coeff_t_150/comparison/case1_lq_compare.png","100":"../coeff_t_100/comparison/case1_lq_compare.png","75":"../coeff_t_75/comparison/case1_lq_compare.png","50":"../coeff_t_50/comparison/case1_lq_compare.png"}},"regions":[{"id":"small_text","label":"小字","box":[850,300,3350,950],"size":[2500,650],"roles":{"lq":"crops/case1/small_text/lq.png","gt":"crops/case1/small_text/gt.png"},"outputs":{"200":"crops/case1/small_text/coeff_200.png","150":"crops/case1/small_text/coeff_150.png","100":"crops/case1/small_text/coeff_100.png","75":"crops/case1/small_text/coeff_75.png","50":"crops/case1/small_text/coeff_50.png"}}]},{"id":2,"size":[3072,4096],"raw":{"lq":"../../input/case2_lq.jpg","gt":"../../../csig_dataset/验证集/case2_gt.jpg","outputs":{"200":"../coeff_t_200/output/result/case2_lq.png","150":"../coeff_t_150/output/result/case2_lq.png","100":"../coeff_t_100/output/result/case2_lq.png","75":"../coeff_t_75/output/result/case2_lq.png","50":"../coeff_t_50/output/result/case2_lq.png"},"overviews":{"200":"../coeff_t_200/comparison/case2_lq_compare.png","150":"../coeff_t_150/comparison/case2_lq_compare.png","100":"../coeff_t_100/comparison/case2_lq_compare.png","75":"../coeff_t_75/comparison/case2_lq_compare.png","50":"../coeff_t_50/comparison/case2_lq_compare.png"}},"regions":[{"id":"spine_small_text","label":"书脊小字","box":[1850,300,3072,2650],"size":[1222,2350],"roles":{"lq":"crops/case2/spine_small_text/lq.png","gt":"crops/case2/spine_small_text/gt.png"},"outputs":{"200":"crops/case2/spine_small_text/coeff_200.png","150":"crops/case2/spine_small_text/coeff_150.png","100":"crops/case2/spine_small_text/coeff_100.png","75":"crops/case2/spine_small_text/coeff_75.png","50":"crops/case2/spine_small_text/coeff_50.png"}}]},{"id":3,"size":[4096,3072],"raw":{"lq":"../../input/case3_lq.jpg","gt":"../../../csig_dataset/验证集/case3_gt.jpg","outputs":{"200":"../coeff_t_200/output/result/case3_lq.png","150":"../coeff_t_150/output/result/case3_lq.png","100":"../coeff_t_100/output/result/case3_lq.png","75":"../coeff_t_75/output/result/case3_lq.png","50":"../coeff_t_50/output/result/case3_lq.png"},"overviews":{"200":"../coeff_t_200/comparison/case3_lq_compare.png","150":"../coeff_t_150/comparison/case3_lq_compare.png","100":"../coeff_t_100/comparison/case3_lq_compare.png","75":"../coeff_t_75/comparison/case3_lq_compare.png","50":"../coeff_t_50/comparison/case3_lq_compare.png"}},"regions":[{"id":"bird_water","label":"鸟与水面","box":[1050,650,3300,2250],"size":[2250,1600],"roles":{"lq":"crops/case3/bird_water/lq.png","gt":"crops/case3/bird_water/gt.png"},"outputs":{"200":"crops/case3/bird_water/coeff_200.png","150":"crops/case3/bird_water/coeff_150.png","100":"crops/case3/bird_water/coeff_100.png","75":"crops/case3/bird_water/coeff_75.png","50":"crops/case3/bird_water/coeff_50.png"}}]},{"id":4,"size":[4096,3072],"raw":{"lq":"../../input/case4_lq.jpg","gt":"../../../csig_dataset/验证集/case4_gt.jpg","outputs":{"200":"../coeff_t_200/output/result/case4_lq.png","150":"../coeff_t_150/output/result/case4_lq.png","100":"../coeff_t_100/output/result/case4_lq.png","75":"../coeff_t_75/output/result/case4_lq.png","50":"../coeff_t_50/output/result/case4_lq.png"},"overviews":{"200":"../coeff_t_200/comparison/case4_lq_compare.png","150":"../coeff_t_150/comparison/case4_lq_compare.png","100":"../coeff_t_100/comparison/case4_lq_compare.png","75":"../coeff_t_75/comparison/case4_lq_compare.png","50":"../coeff_t_50/comparison/case4_lq_compare.png"}},"regions":[{"id":"creature_like_left","label":"生物样叶片（左）","box":[250,700,1550,1750],"size":[1300,1050],"roles":{"lq":"crops/case4/creature_like_left/lq.png","gt":"crops/case4/creature_like_left/gt.png"},"outputs":{"200":"crops/case4/creature_like_left/coeff_200.png","150":"crops/case4/creature_like_left/coeff_150.png","100":"crops/case4/creature_like_left/coeff_100.png","75":"crops/case4/creature_like_left/coeff_75.png","50":"crops/case4/creature_like_left/coeff_50.png"}},{"id":"creature_like_right","label":"生物样叶片（右）","box":[2450,700,4050,1850],"size":[1600,1150],"roles":{"lq":"crops/case4/creature_like_right/lq.png","gt":"crops/case4/creature_like_right/gt.png"},"outputs":{"200":"crops/case4/creature_like_right/coeff_200.png","150":"crops/case4/creature_like_right/coeff_150.png","100":"crops/case4/creature_like_right/coeff_100.png","75":"crops/case4/creature_like_right/coeff_75.png","50":"crops/case4/creature_like_right/coeff_50.png"}}]},{"id":5,"size":[4096,3072],"raw":{"lq":"../../input/case5_lq.jpg","gt":"../../../csig_dataset/验证集/case5_gt.jpg","outputs":{"200":"../coeff_t_200/output/result/case5_lq.png","150":"../coeff_t_150/output/result/case5_lq.png","100":"../coeff_t_100/output/result/case5_lq.png","75":"../coeff_t_75/output/result/case5_lq.png","50":"../coeff_t_50/output/result/case5_lq.png"},"overviews":{"200":"../coeff_t_200/comparison/case5_lq_compare.png","150":"../coeff_t_150/comparison/case5_lq_compare.png","100":"../coeff_t_100/comparison/case5_lq_compare.png","75":"../coeff_t_75/comparison/case5_lq_compare.png","50":"../coeff_t_50/comparison/case5_lq_compare.png"}},"regions":[{"id":"digits_pointers","label":"数字 + 指针","box":[1250,300,3150,2350],"size":[1900,2050],"roles":{"lq":"crops/case5/digits_pointers/lq.png","gt":"crops/case5/digits_pointers/gt.png"},"outputs":{"200":"crops/case5/digits_pointers/coeff_200.png","150":"crops/case5/digits_pointers/coeff_150.png","100":"crops/case5/digits_pointers/coeff_100.png","75":"crops/case5/digits_pointers/coeff_75.png","50":"crops/case5/digits_pointers/coeff_50.png"}}]}]};
+const state = { caseId: 1, regionId: 'full', view: 'crops', coeff: null, zoom: 50 };
+const $ = (id) => document.getElementById(id);
+const caseData = () => manifest.cases.find(c => c.id === state.caseId);
+const regionData = () => state.regionId === 'full' ? null : caseData().regions.find(r => r.id === state.regionId);
+const sourceLabel = { lq: 'Input / LQ', output: 'HYPIR Output', gt: 'Ground Truth' };
+function setView(view) { state.view = view; document.querySelectorAll('.view-button').forEach(b => b.classList.toggle('active', b.dataset.view === view)); render(); }
+function setCase(id) { state.caseId = id; state.regionId = 'full'; state.coeff = null; renderControls(); render(); }
+function setCoeff(coeff) { state.coeff = state.coeff === coeff ? null : coeff; render(); }
+function renderControls() {
+  $('caseButtons').innerHTML = manifest.cases.map(c => `<button class="case-button ${c.id === state.caseId ? 'active' : ''}" data-case="${c.id}">case${c.id}</button>`).join('');
+  document.querySelectorAll('.case-button').forEach(b => b.addEventListener('click', () => setCase(Number(b.dataset.case))));
+  const c = caseData();
+  $('regionSelect').innerHTML = `<option value="full">全图</option>` + c.regions.map(r => `<option value="${r.id}">${r.label}</option>`).join('');
+  $('regionSelect').value = state.regionId;
+  $('regionSelect').onchange = e => { state.regionId = e.target.value; render(); };
+  $('coeffButtons').innerHTML = manifest.coeffTs.map(t => `<button class="secondary coeff-button ${state.coeff === t ? 'active' : ''}" data-coeff="${t}">${t}</button>`).join('');
+  document.querySelectorAll('.coeff-button').forEach(b => b.addEventListener('click', () => setCoeff(Number(b.dataset.coeff))));
+}
+function imageUrl(role, coeff, region) {
+  const c = caseData();
+  if (region) return role === 'output' ? region.outputs[String(coeff)] : region.roles[role];
+  return role === 'output' ? c.raw.outputs[String(coeff)] : c.raw[role];
+}
+function render() {
+  const c = caseData(); const r = regionData();
+  $('title').textContent = `case${c.id} · ${r ? r.label : '全图'} · ${c.size[0]}×${c.size[1]}`;
+  $('details').textContent = r ? `crop ${r.box.join(', ')} · ${r.size[0]}×${r.size[1]}` : '原图不裁剪';
+  $('cropGrid').classList.toggle('active', state.view === 'crops');
+  $('overview').classList.toggle('active', state.view === 'overview');
+  $('native').classList.toggle('active', state.view === 'native');
+  $('nativeTools').classList.toggle('active', state.view === 'native');
+  if (state.view === 'crops') renderCrops(c, r);
+  if (state.view === 'overview') renderOverview(c);
+  if (state.view === 'native') renderNative(c);
+}
+function renderCrops(c, r) {
+  const coeffs = state.coeff ? [state.coeff] : manifest.coeffTs;
+  if (!r) { $('cropGrid').innerHTML = `<div class="empty">选择一个局部区域，或切换到三联总览 / 原尺寸。</div>`; return; }
+  $('cropGrid').innerHTML = coeffs.map(t => `<section class="crop-row ${state.coeff === t ? 'selected' : ''}"><div class="row-head"><b>coeff_t=${t}</b><span>${r.label} · ${r.size[0]}×${r.size[1]}</span></div><div class="triptych">${['lq','output','gt'].map(role => `<figure><figcaption>${sourceLabel[role]}</figcaption><img src="${imageUrl(role,t,r)}" loading="lazy"></figure>`).join('')}</div></section>`).join('');
+}
+function renderOverview(c) {
+  const t = state.coeff || manifest.coeffTs[0];
+  $('overview').innerHTML = `<img src="${c.raw.overviews[String(t)]}" alt="case${c.id} coeff_t=${t} triptych"><div class="subtitle" style="padding:8px 2px 0">coeff_t=${t} · 2048px 面板展示图；原始文件见原尺寸视图</div>`;
+}
+function renderNative(c) {
+  const t = state.coeff || manifest.coeffTs[0];
+  $('zoom').value = state.zoom; $('zoomValue').textContent = `${state.zoom}%`;
+  $('native').innerHTML = ['lq','output','gt'].map(role => `<div class="viewport" data-role="${role}"><div class="panel-label"><span>${sourceLabel[role]} · ${t}</span><a href="${imageUrl(role,t,null)}" target="_blank" rel="noreferrer">open raw</a></div><img src="${imageUrl(role,t,null)}" alt="${sourceLabel[role]} case${c.id}"></div>`).join('');
+  const viewports = [...document.querySelectorAll('.native .viewport')];
+  viewports.forEach(v => { v.addEventListener('scroll', () => { if (!$('syncScroll').checked || v.dataset.syncing) return; const x = v.scrollLeft / Math.max(1, v.scrollWidth - v.clientWidth); const y = v.scrollTop / Math.max(1, v.scrollHeight - v.clientHeight); viewports.forEach(other => { if (other === v) return; other.dataset.syncing = '1'; other.scrollLeft = x * Math.max(0, other.scrollWidth - other.clientWidth); other.scrollTop = y * Math.max(0, other.scrollHeight - other.clientHeight); delete other.dataset.syncing; }); }); });
+  document.querySelectorAll('.native .viewport img').forEach(img => { img.onload = () => applyZoom(img); });
+}
+function applyZoom(img) { const z = state.zoom / 100; img.style.width = `${img.naturalWidth * z}px`; img.style.height = `${img.naturalHeight * z}px`; }
+$('zoom').addEventListener('input', e => { state.zoom = Number(e.target.value); $('zoomValue').textContent = `${state.zoom}%`; document.querySelectorAll('.native .viewport img').forEach(applyZoom); });
+document.querySelectorAll('.view-button').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+renderControls(); render();
+</script>
+</body>
+</html>

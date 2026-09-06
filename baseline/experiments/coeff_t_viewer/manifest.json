@@ -1,0 +1,296 @@
+{
+  "coeffTs": [
+    200,
+    150,
+    100,
+    75,
+    50
+  ],
+  "cases": [
+    {
+      "id": 1,
+      "size": [
+        4096,
+        3072
+      ],
+      "raw": {
+        "lq": "../../input/case1_lq.jpg",
+        "gt": "../../../csig_dataset/验证集/case1_gt.jpg",
+        "outputs": {
+          "200": "../coeff_t_200/output/result/case1_lq.png",
+          "150": "../coeff_t_150/output/result/case1_lq.png",
+          "100": "../coeff_t_100/output/result/case1_lq.png",
+          "75": "../coeff_t_75/output/result/case1_lq.png",
+          "50": "../coeff_t_50/output/result/case1_lq.png"
+        },
+        "overviews": {
+          "200": "../coeff_t_200/comparison/case1_lq_compare.png",
+          "150": "../coeff_t_150/comparison/case1_lq_compare.png",
+          "100": "../coeff_t_100/comparison/case1_lq_compare.png",
+          "75": "../coeff_t_75/comparison/case1_lq_compare.png",
+          "50": "../coeff_t_50/comparison/case1_lq_compare.png"
+        }
+      },
+      "regions": [
+        {
+          "id": "small_text",
+          "label": "小字",
+          "box": [
+            850,
+            300,
+            3350,
+            950
+          ],
+          "size": [
+            2500,
+            650
+          ],
+          "roles": {
+            "lq": "crops/case1/small_text/lq.png",
+            "gt": "crops/case1/small_text/gt.png"
+          },
+          "outputs": {
+            "200": "crops/case1/small_text/coeff_200.png",
+            "150": "crops/case1/small_text/coeff_150.png",
+            "100": "crops/case1/small_text/coeff_100.png",
+            "75": "crops/case1/small_text/coeff_75.png",
+            "50": "crops/case1/small_text/coeff_50.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "size": [
+        3072,
+        4096
+      ],
+      "raw": {
+        "lq": "../../input/case2_lq.jpg",
+        "gt": "../../../csig_dataset/验证集/case2_gt.jpg",
+        "outputs": {
+          "200": "../coeff_t_200/output/result/case2_lq.png",
+          "150": "../coeff_t_150/output/result/case2_lq.png",
+          "100": "../coeff_t_100/output/result/case2_lq.png",
+          "75": "../coeff_t_75/output/result/case2_lq.png",
+          "50": "../coeff_t_50/output/result/case2_lq.png"
+        },
+        "overviews": {
+          "200": "../coeff_t_200/comparison/case2_lq_compare.png",
+          "150": "../coeff_t_150/comparison/case2_lq_compare.png",
+          "100": "../coeff_t_100/comparison/case2_lq_compare.png",
+          "75": "../coeff_t_75/comparison/case2_lq_compare.png",
+          "50": "../coeff_t_50/comparison/case2_lq_compare.png"
+        }
+      },
+      "regions": [
+        {
+          "id": "spine_small_text",
+          "label": "书脊小字",
+          "box": [
+            1850,
+            300,
+            3072,
+            2650
+          ],
+          "size": [
+            1222,
+            2350
+          ],
+          "roles": {
+            "lq": "crops/case2/spine_small_text/lq.png",
+            "gt": "crops/case2/spine_small_text/gt.png"
+          },
+          "outputs": {
+            "200": "crops/case2/spine_small_text/coeff_200.png",
+            "150": "crops/case2/spine_small_text/coeff_150.png",
+            "100": "crops/case2/spine_small_text/coeff_100.png",
+            "75": "crops/case2/spine_small_text/coeff_75.png",
+            "50": "crops/case2/spine_small_text/coeff_50.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "size": [
+        4096,
+        3072
+      ],
+      "raw": {
+        "lq": "../../input/case3_lq.jpg",
+        "gt": "../../../csig_dataset/验证集/case3_gt.jpg",
+        "outputs": {
+          "200": "../coeff_t_200/output/result/case3_lq.png",
+          "150": "../coeff_t_150/output/result/case3_lq.png",
+          "100": "../coeff_t_100/output/result/case3_lq.png",
+          "75": "../coeff_t_75/output/result/case3_lq.png",
+          "50": "../coeff_t_50/output/result/case3_lq.png"
+        },
+        "overviews": {
+          "200": "../coeff_t_200/comparison/case3_lq_compare.png",
+          "150": "../coeff_t_150/comparison/case3_lq_compare.png",
+          "100": "../coeff_t_100/comparison/case3_lq_compare.png",
+          "75": "../coeff_t_75/comparison/case3_lq_compare.png",
+          "50": "../coeff_t_50/comparison/case3_lq_compare.png"
+        }
+      },
+      "regions": [
+        {
+          "id": "bird_water",
+          "label": "鸟与水面",
+          "box": [
+            1050,
+            650,
+            3300,
+            2250
+          ],
+          "size": [
+            2250,
+            1600
+          ],
+          "roles": {
+            "lq": "crops/case3/bird_water/lq.png",
+            "gt": "crops/case3/bird_water/gt.png"
+          },
+          "outputs": {
+            "200": "crops/case3/bird_water/coeff_200.png",
+            "150": "crops/case3/bird_water/coeff_150.png",
+            "100": "crops/case3/bird_water/coeff_100.png",
+            "75": "crops/case3/bird_water/coeff_75.png",
+            "50": "crops/case3/bird_water/coeff_50.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "size": [
+        4096,
+        3072
+      ],
+      "raw": {
+        "lq": "../../input/case4_lq.jpg",
+        "gt": "../../../csig_dataset/验证集/case4_gt.jpg",
+        "outputs": {
+          "200": "../coeff_t_200/output/result/case4_lq.png",
+          "150": "../coeff_t_150/output/result/case4_lq.png",
+          "100": "../coeff_t_100/output/result/case4_lq.png",
+          "75": "../coeff_t_75/output/result/case4_lq.png",
+          "50": "../coeff_t_50/output/result/case4_lq.png"
+        },
+        "overviews": {
+          "200": "../coeff_t_200/comparison/case4_lq_compare.png",
+          "150": "../coeff_t_150/comparison/case4_lq_compare.png",
+          "100": "../coeff_t_100/comparison/case4_lq_compare.png",
+          "75": "../coeff_t_75/comparison/case4_lq_compare.png",
+          "50": "../coeff_t_50/comparison/case4_lq_compare.png"
+        }
+      },
+      "regions": [
+        {
+          "id": "creature_like_left",
+          "label": "生物样叶片（左）",
+          "box": [
+            250,
+            700,
+            1550,
+            1750
+          ],
+          "size": [
+            1300,
+            1050
+          ],
+          "roles": {
+            "lq": "crops/case4/creature_like_left/lq.png",
+            "gt": "crops/case4/creature_like_left/gt.png"
+          },
+          "outputs": {
+            "200": "crops/case4/creature_like_left/coeff_200.png",
+            "150": "crops/case4/creature_like_left/coeff_150.png",
+            "100": "crops/case4/creature_like_left/coeff_100.png",
+            "75": "crops/case4/creature_like_left/coeff_75.png",
+            "50": "crops/case4/creature_like_left/coeff_50.png"
+          }
+        },
+        {
+          "id": "creature_like_right",
+          "label": "生物样叶片（右）",
+          "box": [
+            2450,
+            700,
+            4050,
+            1850
+          ],
+          "size": [
+            1600,
+            1150
+          ],
+          "roles": {
+            "lq": "crops/case4/creature_like_right/lq.png",
+            "gt": "crops/case4/creature_like_right/gt.png"
+          },
+          "outputs": {
+            "200": "crops/case4/creature_like_right/coeff_200.png",
+            "150": "crops/case4/creature_like_right/coeff_150.png",
+            "100": "crops/case4/creature_like_right/coeff_100.png",
+            "75": "crops/case4/creature_like_right/coeff_75.png",
+            "50": "crops/case4/creature_like_right/coeff_50.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "size": [
+        4096,
+        3072
+      ],
+      "raw": {
+        "lq": "../../input/case5_lq.jpg",
+        "gt": "../../../csig_dataset/验证集/case5_gt.jpg",
+        "outputs": {
+          "200": "../coeff_t_200/output/result/case5_lq.png",
+          "150": "../coeff_t_150/output/result/case5_lq.png",
+          "100": "../coeff_t_100/output/result/case5_lq.png",
+          "75": "../coeff_t_75/output/result/case5_lq.png",
+          "50": "../coeff_t_50/output/result/case5_lq.png"
+        },
+        "overviews": {
+          "200": "../coeff_t_200/comparison/case5_lq_compare.png",
+          "150": "../coeff_t_150/comparison/case5_lq_compare.png",
+          "100": "../coeff_t_100/comparison/case5_lq_compare.png",
+          "75": "../coeff_t_75/comparison/case5_lq_compare.png",
+          "50": "../coeff_t_50/comparison/case5_lq_compare.png"
+        }
+      },
+      "regions": [
+        {
+          "id": "digits_pointers",
+          "label": "数字 + 指针",
+          "box": [
+            1250,
+            300,
+            3150,
+            2350
+          ],
+          "size": [
+            1900,
+            2050
+          ],
+          "roles": {
+            "lq": "crops/case5/digits_pointers/lq.png",
+            "gt": "crops/case5/digits_pointers/gt.png"
+          },
+          "outputs": {
+            "200": "crops/case5/digits_pointers/coeff_200.png",
+            "150": "crops/case5/digits_pointers/coeff_150.png",
+            "100": "crops/case5/digits_pointers/coeff_100.png",
+            "75": "crops/case5/digits_pointers/coeff_75.png",
+            "50": "crops/case5/digits_pointers/coeff_50.png"
+          }
+        }
+      ]
+    }
+  ]
+}
