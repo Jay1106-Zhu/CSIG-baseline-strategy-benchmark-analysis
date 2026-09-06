@@ -1,0 +1,4 @@
+CSIG baseline strategy, benchmark images, and analysis package
+Includes: baseline experiment scripts, generated outputs, comparison and diagnostic images, CSV metrics, logs, metadata, reports, and 5 validation LQ/GT pairs.
+Excluded: model checkpoints/weights, local Python environment/cache, and the 100-image test input set without corresponding batch results.
+Source files: 922
