@@ -1,0 +1,17 @@
+Command: git -C HYPIR status --short --untracked-files=all
+Result (2026-09-01):
+?? models/stable-diffusion-2-1-base/model_index.json
+?? models/stable-diffusion-2-1-base/scheduler/scheduler_config.json
+?? models/stable-diffusion-2-1-base/text_encoder/config.json
+?? models/stable-diffusion-2-1-base/text_encoder/model.safetensors
+?? models/stable-diffusion-2-1-base/tokenizer/merges.txt
+?? models/stable-diffusion-2-1-base/tokenizer/special_tokens_map.json
+?? models/stable-diffusion-2-1-base/tokenizer/tokenizer_config.json
+?? models/stable-diffusion-2-1-base/tokenizer/vocab.json
+?? models/stable-diffusion-2-1-base/unet/config.json
+?? models/stable-diffusion-2-1-base/unet/diffusion_pytorch_model.safetensors
+?? models/stable-diffusion-2-1-base/vae/config.json
+?? models/stable-diffusion-2-1-base/vae/diffusion_pytorch_model.safetensors
+?? weights/HYPIR_sd2.pth
+
+No tracked HYPIR source files are modified.

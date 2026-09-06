@@ -1,0 +1,6 @@
+2026-09-01: verified and reused existing coeff_t=200 outputs from ../coeff_t_200/output/result (model_t=200, coeff_t=200, seed=231).
+2026-09-01: verified and reused existing coeff_t=50 outputs from ../coeff_t_50/output/result (model_t=200, coeff_t=50, seed=231).
+2026-09-01: generated five LQ-derived confidence maps, median high/low masks, and three offline fusion variants.
+2026-09-01: generated seven-panel comparisons and absolute error-map comparisons.
+2026-09-01: evaluated full-image metrics with LPIPS-Alex and high/low region metrics.
+2026-09-01: no HYPIR source files, baseline outputs, baseline comparisons, or baseline evaluation CSV were modified.

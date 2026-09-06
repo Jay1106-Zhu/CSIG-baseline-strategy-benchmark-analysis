@@ -1,0 +1,6 @@
+﻿case,patch_count,h200_mean_generated_change_l1,h50_mean_generated_change_l1,h200_mean_improvement_l1,h50_mean_improvement_l1,type_a_useful,type_b_harmful,type_c_unchanged,type_d_mismatch,type_e_conservative,type_f_potential_ideal
+case1,713,3.623992,1.332490,-1.300269,-0.018551,1,0,0,176,271,35
+case2,713,8.811982,3.153747,-2.248708,0.379698,0,11,0,168,503,21
+case3,713,5.090462,1.744698,-3.139209,-0.579550,0,2,0,177,5,8
+case4,713,13.592241,2.984115,-2.606109,0.240049,0,1,10,178,690,0
+case5,713,8.680095,4.350329,-1.247856,0.756578,14,4,0,148,551,78

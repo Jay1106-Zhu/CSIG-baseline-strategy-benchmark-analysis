@@ -1,0 +1,8 @@
+﻿feature,pearson_required_change,spearman_required_change,pearson_improvement_200,spearman_improvement_200,n
+local_variance,0.092147,0.608429,0.104838,0.033427,3565
+gradient_magnitude,0.381899,0.729566,-0.047941,-0.042970,3565
+edge_density,-0.015293,0.440545,0.122397,0.146318,3565
+laplacian_magnitude,0.285919,0.797343,0.059535,-0.007726,3565
+local_contrast,0.476442,0.756282,0.066112,0.036593,3565
+local_entropy,0.560639,0.751792,-0.172217,-0.143566,3565
+blur_proxy,-0.159115,-0.256035,0.210615,0.149412,3565

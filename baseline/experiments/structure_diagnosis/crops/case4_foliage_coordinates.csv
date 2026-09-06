@@ -1,0 +1,4 @@
+﻿case,crop_index,x0,y0,x1,y1,selection
+case4,1,3456,0,3712,256,top LQ-GT gradient difference; semantic label requires manual confirmation
+case4,2,3328,0,3584,256,top LQ-GT gradient difference; semantic label requires manual confirmation
+case4,3,3840,0,4096,256,top LQ-GT gradient difference; semantic label requires manual confirmation
