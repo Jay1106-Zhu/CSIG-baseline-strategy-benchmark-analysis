@@ -1,0 +1,61 @@
+case,method,region,pixels,mean_gate,change_L1,error_to_GT_L1,gradient_change,new_edge_score,alignment
+case1,LQ,strong_edge,1259550,,0.000000,13.698241,0.000000,,
+case1,LQ,textured_non_edge,1257033,,0.000000,5.809687,0.000000,,
+case1,HYPIR-50,strong_edge,1259550,,5.025649,13.117381,16.355171,,
+case1,HYPIR-50,textured_non_edge,1257033,,2.227700,4.931219,4.982933,,
+case1,HYPIR-200,strong_edge,1259550,,15.036812,17.104635,54.723061,,
+case1,HYPIR-200,textured_non_edge,1257033,,4.534739,5.578650,12.945871,,
+case1,texture_selective_h200,strong_edge,1259550,,3.701958,13.222216,14.128364,,
+case1,texture_selective_h200,textured_non_edge,1257033,,0.970619,5.446285,3.212245,,
+case1,Structure-Anchored Residual Fusion v2,strong_edge,1259550,0.019968,0.300240,13.631497,1.193106,0.057274,0.677058
+case1,Structure-Anchored Residual Fusion v2,textured_non_edge,1257033,0.079092,0.382546,5.659428,1.104169,0.112810,0.134555
+case2,LQ,strong_edge,1838558,,0.000000,14.644784,0.000000,,
+case2,LQ,textured_non_edge,927431,,0.000000,7.409846,0.000000,,
+case2,HYPIR-50,strong_edge,1838558,,9.881861,12.889394,33.300228,,
+case2,HYPIR-50,textured_non_edge,927431,,3.172423,6.900588,6.213983,,
+case2,HYPIR-200,strong_edge,1838558,,27.608587,22.155960,90.762833,,
+case2,HYPIR-200,textured_non_edge,927431,,8.170057,8.145034,18.241465,,
+case2,texture_selective_h200,strong_edge,1838558,,6.102265,12.318056,21.082605,,
+case2,texture_selective_h200,textured_non_edge,927431,,2.074400,6.604309,5.014802,,
+case2,Structure-Anchored Residual Fusion v2,strong_edge,1838558,0.019970,0.550590,14.324700,2.450417,0.050005,0.644211
+case2,Structure-Anchored Residual Fusion v2,textured_non_edge,927431,0.100172,0.807326,7.031618,2.203868,0.069539,0.260528
+case3,LQ,strong_edge,1420128,,0.000000,5.751967,0.000000,,
+case3,LQ,textured_non_edge,1125906,,0.000000,3.439490,0.000000,,
+case3,LQ,blurred_texture,743,,0.000000,1.043517,0.000000,,
+case3,HYPIR-50,strong_edge,1420128,,4.615738,6.606131,11.273420,,
+case3,HYPIR-50,textured_non_edge,1125906,,2.333129,4.098259,4.547185,,
+case3,HYPIR-50,blurred_texture,743,,1.126963,1.641992,2.886225,,
+case3,HYPIR-200,strong_edge,1420128,,14.227874,13.769187,35.097660,,
+case3,HYPIR-200,textured_non_edge,1125906,,6.887186,7.373325,16.260895,,
+case3,HYPIR-200,blurred_texture,743,,2.030507,2.416330,5.570144,,
+case3,texture_selective_h200,strong_edge,1420128,,3.107202,5.864468,8.058335,,
+case3,texture_selective_h200,textured_non_edge,1125906,,1.454580,3.628364,3.496520,,
+case3,texture_selective_h200,blurred_texture,743,,0.384926,1.194258,1.280742,,
+case3,Structure-Anchored Residual Fusion v2,strong_edge,1420128,0.019962,0.283793,5.693002,0.913661,0.049835,0.643137
+case3,Structure-Anchored Residual Fusion v2,textured_non_edge,1125906,0.098419,0.655684,3.454208,1.669181,0.100086,0.252634
+case3,Structure-Anchored Residual Fusion v2,blurred_texture,743,0.070957,0.170524,1.111829,0.445353,0.036618,0.156659
+case4,LQ,strong_edge,2516583,,0.000000,35.210270,0.000000,,
+case4,LQ,textured_non_edge,525840,,0.000000,25.776863,0.000000,,
+case4,LQ,blurred_texture,844,,0.000000,33.563190,0.000000,,
+case4,HYPIR-50,strong_edge,2516583,,6.127275,34.513855,18.176643,,
+case4,HYPIR-50,textured_non_edge,525840,,3.117362,25.858828,6.428273,,
+case4,HYPIR-50,blurred_texture,844,,3.124013,33.033966,8.268040,,
+case4,HYPIR-200,strong_edge,2516583,,27.927475,40.902824,92.557121,,
+case4,HYPIR-200,textured_non_edge,525840,,12.063047,27.123652,38.543549,,
+case4,HYPIR-200,blurred_texture,844,,17.187992,37.312798,69.175339,,
+case4,texture_selective_h200,strong_edge,2516583,,6.391577,34.853893,20.359915,,
+case4,texture_selective_h200,textured_non_edge,525840,,3.056474,25.538118,9.208748,,
+case4,texture_selective_h200,blurred_texture,844,,4.083728,33.600319,15.037401,,
+case4,Structure-Anchored Residual Fusion v2,strong_edge,2516583,0.019944,0.557218,35.142284,2.491472,0.055788,0.581749
+case4,Structure-Anchored Residual Fusion v2,textured_non_edge,525840,0.096723,1.148720,25.626234,3.311986,0.090089,0.178584
+case4,Structure-Anchored Residual Fusion v2,blurred_texture,844,0.104312,1.759510,33.502792,5.844893,0.082857,0.348294
+case5,LQ,strong_edge,1532662,,0.000000,21.831503,0.000000,,
+case5,LQ,textured_non_edge,1030807,,0.000000,9.412402,0.000000,,
+case5,HYPIR-50,strong_edge,1532662,,18.322189,17.289444,68.582336,,
+case5,HYPIR-50,textured_non_edge,1030807,,5.329195,8.346673,15.930799,,
+case5,HYPIR-200,strong_edge,1532662,,35.711273,26.860039,120.530205,,
+case5,HYPIR-200,textured_non_edge,1030807,,9.488328,9.484402,22.363880,,
+case5,texture_selective_h200,strong_edge,1532662,,8.456952,18.305038,31.457521,,
+case5,texture_selective_h200,textured_non_edge,1030807,,2.316292,8.546686,6.794383,,
+case5,Structure-Anchored Residual Fusion v2,strong_edge,1532662,0.019965,0.713545,21.446764,3.000090,0.062455,0.654020
+case5,Structure-Anchored Residual Fusion v2,textured_non_edge,1030807,0.094983,0.902131,9.012153,2.593649,0.114274,0.207895

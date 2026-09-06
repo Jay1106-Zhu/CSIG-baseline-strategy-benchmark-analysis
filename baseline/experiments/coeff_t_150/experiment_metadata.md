@@ -1,0 +1,25 @@
+﻿# coeff_t=150 瀹為獙璁板綍
+
+- status: completed
+- total_elapsed_seconds: 350.165
+- model_load_seconds: 12.87
+- base_model_type: sd2
+- base_model_path: HYPIR/models/stable-diffusion-2-1-base
+- base_model_repo_id: sd-research/stable-diffusion-2-1-base
+- model_t: 200
+- coeff_t: 150
+- lora_rank: 256
+- lora_modules: to_k,to_q,to_v,to_out.0,conv,conv1,conv2,conv_shortcut,conv_out,proj_in,proj_out,ff.net.2,ff.net.0.proj
+- patch_size: 512
+- stride: 256
+- scale_by: factor
+- upscale: 1
+- captioner: empty
+- seed: 231
+- device: cuda
+- input_dir: baseline/input
+- output_dir: baseline/experiments/coeff_t_150/output
+- comparison_dir: baseline/experiments/coeff_t_150/comparison
+- metrics_csv: baseline/experiments/coeff_t_150/evaluation_metrics.csv
+- inference_entrypoint: HYPIR/test.py
+- command: & "D:\MyProjects\CSIG\.conda\python.exe" test.py --base_model_type sd2 --base_model_path "models\stable-diffusion-2-1-base" --model_t 200 --coeff_t 150 --lora_rank 256 --lora_modules "to_k,to_q,to_v,to_out.0,conv,conv1,conv2,conv_shortcut,conv_out,proj_in,proj_out,ff.net.2,ff.net.0.proj" --weight_path "weights\HYPIR_sd2.pth" --patch_size 512 --stride 256 --lq_dir "..\baseline\input" --scale_by factor --upscale 1 --captioner empty --output_dir "..\baseline\experiments\coeff_t_150\output" --seed 231 --device cuda
