@@ -1,0 +1,105 @@
+{
+  "experiment": "CSIG baseline bake-off, B2 DiffIR Motion Deblurring",
+  "status": "PASS",
+  "scope": {
+    "tested_models": [
+      "Identity",
+      "HYPIR-50",
+      "DiffIR Motion Deblurring (DiffIRS2)"
+    ],
+    "not_run": [
+      "EVSSM",
+      "DiffBIR"
+    ],
+    "training": false,
+    "gt_used_during_inference": false,
+    "gt_used_for_benchmark_only": true
+  },
+  "repository": {
+    "remote": "ssh://git@ssh.github.com:443/Jay1106-Zhu/CSIG-baseline-strategy-benchmark-analysis.git",
+    "branch": "baseline-2-diffir-motion-deblurring",
+    "base_commit": "50ae047",
+    "source_repo": "https://github.com/Zj-BinXia/DiffIR",
+    "source_commit": "293f86cdf313914ea0ffb2457ed032e4f1bd9dd2"
+  },
+  "dataset": {
+    "lq_dir": "baseline/input",
+    "case_count": 5,
+    "case_ids": ["case1", "case2", "case3", "case4", "case5"],
+    "output_dimensions": "identical to each decoded LQ image",
+    "color_mode": "RGB"
+  },
+  "diffir": {
+    "stage": "DiffIRS2",
+    "checkpoint": "model_cache/diffir_motion_deblurring/Deblurring-DiffIRS2.pth",
+    "checkpoint_sha256": "679fe3aae09a49a31517d1f04faed93dc85456050cde0df416a7ee4fe4297031",
+    "timesteps": 4,
+    "state_dict": "params_ema",
+    "full_frame_first": true,
+    "oom_fallback": {
+      "tile_candidates": [512, 384, 256],
+      "overlap": 128,
+      "weighted_blending": "Hann window"
+    },
+    "all_cases": {
+      "oom_retry": true,
+      "tile": 512,
+      "overlap": 128
+    }
+  },
+  "comparison": {
+    "hypir": {
+      "label": "HYPIR-50",
+      "output_dir": "baseline/experiments/coeff_t_50/output/result",
+      "model_t": 200,
+      "coeff_t": 50,
+      "upscale": 1
+    },
+    "identity": {
+      "label": "Identity",
+      "output": "decoded LQ image"
+    }
+  },
+  "metrics": {
+    "full_resolution": ["PSNR", "SSIM"],
+    "perceptual_max_side": 1024,
+    "perceptual_metrics": ["LPIPS-Alex", "DISTS"],
+    "no_reference_metrics": ["MUSIQ", "MANIQA", "CLIPIQA"],
+    "no_reference_status": "NOT COMPUTED: pyiqa is unavailable in the project environment",
+    "metric_inputs": "GT is read only by baseline_bakeoff/benchmark.py after inference"
+  },
+  "artifacts": {
+    "per_case_csv": "baseline_bakeoff/results_per_case.csv",
+    "average_csv": "baseline_bakeoff/results_average.csv",
+    "diffir_manifest": "baseline_bakeoff/logs/diffir_inference_manifest.json",
+    "full_visual": "baseline_bakeoff/visuals/full_comparison.jpg",
+    "crop_visual": "baseline_bakeoff/visuals/detail_crops.jpg",
+    "report": "baseline_bakeoff/BACKBONE_SELECTION_REPORT.md"
+  },
+  "environment": {
+    "python": "3.11.16",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "device": "NVIDIA GeForce RTX 5080 Laptop GPU",
+    "device_memory_gib": 15.92
+  },
+  "reproducibility": {
+    "runner": "baseline_bakeoff/runners/run_diffir.py",
+    "benchmark": "baseline_bakeoff/benchmark.py",
+    "fixed_crop_boxes": {
+      "case1": [0, 400, 2048, 1800],
+      "case2": [900, 800, 2400, 2500],
+      "case3": [2100, 1300, 3200, 2500],
+      "case4": [1300, 900, 3000, 2400],
+      "case5": [700, 600, 2700, 2800]
+    },
+    "prohibited_operations": [
+      "training",
+      "fine-tuning or LoRA",
+      "GT-driven parameter selection",
+      "alpha blending",
+      "edge or texture routing",
+      "post-processing sharpening"
+    ]
+  }
+}

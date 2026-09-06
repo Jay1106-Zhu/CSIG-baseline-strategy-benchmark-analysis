@@ -1,0 +1,71 @@
+{
+  "model": "DiffIR Motion Deblurring",
+  "stage": "DiffIRS2",
+  "checkpoint": "..\\..\\model_cache\\diffir_motion_deblurring\\Deblurring-DiffIRS2.pth",
+  "checkpoint_sha256": "679fe3aae09a49a31517d1f04faed93dc85456050cde0df416a7ee4fe4297031",
+  "source_commit": "293f86cdf313914ea0ffb2457ed032e4f1bd9dd2",
+  "input_dir": "baseline\\input",
+  "output_dir": "baseline_bakeoff\\outputs\\diffir",
+  "config": {
+    "timesteps": 4,
+    "tile": null,
+    "overlap": 128
+  },
+  "environment": {
+    "torch": "2.11.0+cu128",
+    "device": "cuda"
+  },
+  "gt_used_during_inference": false,
+  "cases": [
+    {
+      "case": "case1",
+      "input": "baseline\\input\\case1_lq.jpg",
+      "output": "baseline_bakeoff\\outputs\\diffir\\case1_lq.png",
+      "runtime_sec": 45.85995690012351,
+      "peak_vram_gb": 20.50144863128662,
+      "tile": 512,
+      "overlap": 128,
+      "oom_retry": true
+    },
+    {
+      "case": "case2",
+      "input": "baseline\\input\\case2_lq.jpg",
+      "output": "baseline_bakeoff\\outputs\\diffir\\case2_lq.png",
+      "runtime_sec": 40.013253499986604,
+      "peak_vram_gb": 20.64207363128662,
+      "tile": 512,
+      "overlap": 128,
+      "oom_retry": true
+    },
+    {
+      "case": "case3",
+      "input": "baseline\\input\\case3_lq.jpg",
+      "output": "baseline_bakeoff\\outputs\\diffir\\case3_lq.png",
+      "runtime_sec": 47.78830810007639,
+      "peak_vram_gb": 20.64207363128662,
+      "tile": 512,
+      "overlap": 128,
+      "oom_retry": true
+    },
+    {
+      "case": "case4",
+      "input": "baseline\\input\\case4_lq.jpg",
+      "output": "baseline_bakeoff\\outputs\\diffir\\case4_lq.png",
+      "runtime_sec": 44.89617400011048,
+      "peak_vram_gb": 20.64207363128662,
+      "tile": 512,
+      "overlap": 128,
+      "oom_retry": true
+    },
+    {
+      "case": "case5",
+      "input": "baseline\\input\\case5_lq.jpg",
+      "output": "baseline_bakeoff\\outputs\\diffir\\case5_lq.png",
+      "runtime_sec": 45.66960019990802,
+      "peak_vram_gb": 20.64207363128662,
+      "tile": 512,
+      "overlap": 128,
+      "oom_retry": true
+    }
+  ]
+}
