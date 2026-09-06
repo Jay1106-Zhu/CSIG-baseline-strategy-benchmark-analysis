@@ -1,0 +1,24 @@
+# model_t=200 实验记录
+
+- status: completed
+- total_elapsed_seconds: 320.999
+- model_load_seconds: 11.69
+- base_model_type: sd2
+- base_model_path: HYPIR/models/stable-diffusion-2-1-base
+- base_model_repo_id: sd-research/stable-diffusion-2-1-base
+- model_t: 200
+- coeff_t: 200
+- lora_rank: 256
+- lora_modules: to_k,to_q,to_v,to_out.0,conv,conv1,conv2,conv_shortcut,conv_out,proj_in,proj_out,ff.net.2,ff.net.0.proj
+- patch_size: 512
+- stride: 256
+- scale_by: factor
+- upscale: 1
+- captioner: empty
+- seed: 231
+- device: cuda
+- input_dir: baseline/input
+- output_dir: baseline/experiments/model_t_200/output
+- comparison_dir: baseline/experiments/model_t_200/comparison
+- metrics_csv: baseline/experiments/model_t_200/evaluation_metrics.csv
+- inference_entrypoint: HYPIR/test.py
