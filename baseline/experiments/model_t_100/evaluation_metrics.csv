@@ -1,0 +1,7 @@
+﻿Case,LQ PSNR (dB),Output PSNR (dB),Delta PSNR (dB),PSNR Conclusion,LQ SSIM,Output SSIM,Delta SSIM,SSIM Conclusion,LQ LPIPS-Alex,Output LPIPS-Alex,Delta LPIPS,LPIPS Conclusion,LQ Path,GT Path,Output Path
+case1,32.028801,26.722953,-5.305848,Degraded,0.948453,0.741748,-0.206706,Degraded,0.072517,0.583466,0.510950,Degraded,baseline\input\case1_lq.jpg,csig_dataset\验证集\case1_gt.jpg,baseline\experiments\model_t_100\output\result\case1_lq.png
+case2,28.189381,23.298021,-4.891361,Degraded,0.831443,0.706393,-0.125051,Degraded,0.373972,0.351573,-0.022399,Improved,baseline\input\case2_lq.jpg,csig_dataset\验证集\case2_gt.jpg,baseline\experiments\model_t_100\output\result\case2_lq.png
+case3,35.622082,26.927404,-8.694678,Degraded,0.934958,0.783107,-0.151851,Degraded,0.170643,0.429188,0.258544,Degraded,baseline\input\case3_lq.jpg,csig_dataset\验证集\case3_gt.jpg,baseline\experiments\model_t_100\output\result\case3_lq.png
+case4,18.056199,16.720051,-1.336149,Degraded,0.309323,0.270470,-0.038852,Degraded,0.879949,0.611766,-0.268183,Improved,baseline\input\case4_lq.jpg,csig_dataset\验证集\case4_gt.jpg,baseline\experiments\model_t_100\output\result\case4_lq.png
+case5,26.275637,22.608555,-3.667081,Degraded,0.864316,0.715745,-0.148571,Degraded,0.285579,0.494812,0.209233,Degraded,baseline\input\case5_lq.jpg,csig_dataset\验证集\case5_gt.jpg,baseline\experiments\model_t_100\output\result\case5_lq.png
+Average,28.034420,23.255397,-4.779023,Degraded,0.777699,0.643493,-0.134206,Degraded,0.356532,0.494161,0.137629,Degraded,.,.,.
