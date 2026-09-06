@@ -1,0 +1,21 @@
+# E1 SwinIR fidelity baseline metadata
+
+- model: SwinIR-M color JPEG CAR JPEG40
+- checkpoint: `D:\MyProjects\CSIG\baseline\experiments\E1_fidelity\swinir_car_jpeg40\checkpoint\006_colorCAR_DFWB_s126w7_SwinIR-M_jpeg40.pth`
+- device: `cuda`
+- model_load_seconds: 0.547554
+- total_command_wall_time_seconds: 1112.3
+- sum_model_inference_seconds: 911.765771
+- peak_memory_allocated_gib: 3.335263
+- peak_memory_reserved_gib: 4.683594
+- tile: 504
+- tile_overlap: 32
+- window_size: 7
+- padding: reflected flip to window multiple; output crop to original size
+- cases: case1, case2, case3, case4, case5
+- input_dir: `D:\MyProjects\CSIG\baseline\input`
+- gt_dir: `D:\MyProjects\CSIG\csig_dataset\验证集`
+- h50_dir: `D:\MyProjects\CSIG\baseline\experiments\coeff_t_50\output\result`
+- output_dir: `D:\MyProjects\CSIG\baseline\experiments\E1_fidelity\swinir_car_jpeg40\output`
+- inference: no TTA, ensemble, finetuning, LoRA, SAM, or OCR
+- metrics: E0-compatible PSNR/SSIM and LPIPS-Alex (max-side 1024)
