@@ -102,6 +102,7 @@ def make_run_manifest(
     output_dir: Path | str,
     config: dict[str, Any],
     environment: dict[str, str],
+    seed: int = 0,
 ) -> dict[str, Any]:
     """Describe the LQ-only inference contract without recording any GT source."""
 
@@ -115,6 +116,7 @@ def make_run_manifest(
         "output_dir": str(output_dir),
         "config": config,
         "environment": environment,
+        "seed": seed,
         "gt_used_during_inference": False,
     }
 
@@ -265,6 +267,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--source-commit", default="293f86cdf313914ea0ffb2457ed032e4f1bd9dd2")
     parser.add_argument("--device", default="auto")
+    parser.add_argument("--seed", type=int, default=0, help="Fixed seed for DiffIR's sampled IPR initialization.")
     parser.add_argument("--tile", type=int, default=0, help="Optional tile size; only use after an OOM retry.")
     parser.add_argument("--overlap", type=int, default=128)
     return parser
@@ -276,6 +279,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     tile = args.tile or None
     if not args.checkpoint.is_file():
         raise FileNotFoundError(f"DiffIR checkpoint does not exist: {args.checkpoint}")
+    torch.manual_seed(args.seed)
+    if device.type == "cuda":
+        torch.cuda.manual_seed_all(args.seed)
     model = _build_model(args.checkpoint, args.diffir_root, device)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     cases: list[dict[str, Any]] = []
@@ -312,6 +318,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         output_dir=args.output_dir,
         config={"timesteps": 4, "tile": tile, "overlap": args.overlap},
         environment={"torch": torch.__version__, "device": str(device)},
+        seed=args.seed,
     )
     manifest["cases"] = cases
     args.manifest.parent.mkdir(parents=True, exist_ok=True)

@@ -108,3 +108,17 @@ class DiffIRRunnerContractTests(unittest.TestCase):
         self.assertEqual(manifest["checkpoint_sha256"], "abc123")
         self.assertEqual(manifest["config"]["timesteps"], 4)
         self.assertNotIn("gt_dir", manifest)
+
+    def test_manifest_records_fixed_inference_seed(self) -> None:
+        manifest = make_run_manifest(
+            checkpoint=Path("Deblurring-DiffIRS2.pth"),
+            checkpoint_sha256="abc123",
+            source_commit="293f86c",
+            input_dir=Path("input"),
+            output_dir=Path("output"),
+            config={"timesteps": 4, "tile": 512},
+            environment={"torch": "2.11.0+cu128"},
+            seed=0,
+        )
+
+        self.assertEqual(manifest["seed"], 0)

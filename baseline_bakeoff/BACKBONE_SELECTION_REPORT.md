@@ -55,7 +55,10 @@ image itself. No HYPIR source, checkpoint, or prior experiment was modified.
 
 DiffIR was called with LQ only. The runner never loads or passes GT to the
 model. It decodes image content as RGB, preserves the original dimensions, and
-uses the official DiffIRS2 four-timestep configuration.
+uses the official DiffIRS2 four-timestep configuration. The reported rerun
+uses the official fixed inference seed `0` (`manual_seed: 0` in the official
+test configuration); the seed is recorded in both inference and project
+manifests.
 
 Full-frame inference was attempted first for every case. Each 4K case hit CUDA
 OOM, then succeeded with deterministic weighted tiling using `tile=512` and
@@ -77,7 +80,7 @@ Average results from `results_average.csv`:
 | --- | ---: | ---: | ---: | ---: |
 | Identity | 28.0344 | 0.7777 | 0.2313 | 0.1798 |
 | HYPIR-50 | **28.2575** | 0.7769 | **0.1808** | **0.1608** |
-| DiffIR-DiffIRS2 | 27.7918 | 0.7753 | 0.2047 | 0.1791 |
+| DiffIR-DiffIRS2 | 27.7922 | 0.7753 | 0.2047 | 0.1790 |
 
 HYPIR-50 has the strongest average PSNR, LPIPS, and DISTS in this five-case
 comparison. Identity has the highest average SSIM by a small margin. DiffIR is
@@ -91,11 +94,11 @@ The per-case table is the authoritative source in `results_per_case.csv`.
 
 | Case | Subject | PSNR leader | DiffIR observation |
 | --- | --- | --- | --- |
-| case1 | Chinese text | HYPIR-50 (32.1433) | 31.4155, slightly below Identity; LPIPS close to HYPIR |
-| case2 | book/small text | HYPIR-50 (28.9763) | 28.4064, between HYPIR and Identity on PSNR |
-| case3 | bird detail | Identity (35.6221) | 35.2222, second on PSNR and above HYPIR |
-| case4 | dense foliage | HYPIR-50 (18.0846) | 17.9819, slightly below Identity; all methods are difficult here |
-| case5 | clock geometry | HYPIR-50 (27.3948) | 25.9330, below Identity and HYPIR |
+| case1 | Chinese text | HYPIR-50 (32.1433) | 31.4169, slightly below Identity; LPIPS close to HYPIR |
+| case2 | book/small text | HYPIR-50 (28.9763) | 28.4034, between HYPIR and Identity on PSNR |
+| case3 | bird detail | Identity (35.6221) | 35.2261, second on PSNR and above HYPIR |
+| case4 | dense foliage | HYPIR-50 (18.0846) | 17.9822, slightly below Identity; all methods are difficult here |
+| case5 | clock geometry | HYPIR-50 (27.3948) | 25.9324, below Identity and HYPIR |
 
 The case-level pattern is mixed rather than a universal DiffIR gain. DiffIR
 does not exceed HYPIR-50 on any average metric, and it does not lead PSNR on
@@ -117,7 +120,7 @@ qualitative evidence rather than converted into a score.
 
 ## 8 4K Runtime and VRAM
 
-DiffIR took 40.01 to 47.79 seconds per case (mean 44.85 seconds). All five
+DiffIR took 47.39 to 65.36 seconds per case (mean 55.05 seconds). All five
 cases required the same OOM retry and `512/128` tiled execution. The manifest's
 `peak_vram_gb` is the CUDA allocator high-water mark after the failed full-frame
 probe (about 20.5 to 20.64 GB), not physical resident VRAM; the GPU reports
