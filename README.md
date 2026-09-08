@@ -17,6 +17,22 @@
 | HYPIR-50 | **28.26** | 0.777 | **0.181** | **0.161** |
 | DiffIR-S2（本地 runner） | 27.79 | 0.775 | 0.205 | 0.179 |
 
+## 去哪看（HYPIR / DiffIR 分开）
+
+| 看什么 | 路径 |
+| --- | --- |
+| **HYPIR** 实验、指标、对比图 | [`baseline/`](baseline/) |
+| HYPIR-50 输出（当前主对照） | [`baseline/experiments/coeff_t_50/output/result/`](baseline/experiments/coeff_t_50/output/result/) |
+| HYPIR 策略报告 | [`reports/`](reports/) |
+| **DiffIR** runner、CSV、报告 | [`baseline_bakeoff/`](baseline_bakeoff/) |
+| DiffIR 输出（本地 runner） | [`baseline_bakeoff/outputs/diffir/`](baseline_bakeoff/outputs/diffir/) |
+| DiffIR 输出（官方 yaml + 分块） | [`baseline_bakeoff/outputs/diffir_official/`](baseline_bakeoff/outputs/diffir_official/) |
+| DiffIR 对照报告 | [`baseline_bakeoff/BACKBONE_SELECTION_REPORT.md`](baseline_bakeoff/BACKBONE_SELECTION_REPORT.md) |
+| 验证集 5 对 LQ/GT | [`csig_dataset/验证集/`](csig_dataset/验证集/) |
+| 规划 / 交接 / 赛题 | [`docs/`](docs/) |
+
+两组代码和输出不混在同一目录。评测表会把 Identity、HYPIR-50、DiffIR 放在一起比，那是对照，不是实现混用。
+
 ## 仓库地图
 
 ```
@@ -42,15 +58,9 @@ tests/                    bakeoff 契约测试
 
 | 分支 | 内容 |
 | --- | --- |
-| `main` | HYPIR 实验打包快照（`50ae047`） |
-| `baseline-2-diffir-motion-deblurring` | 在 `main` 上增加 DiffIR bakeoff |
-| 本分支 | 目录整理 + 官方 yaml 驱动的 DiffIR 复现 |
-
-看 DiffIR 输出请打开：
-
-- 既有本地 runner：[`baseline_bakeoff/outputs/diffir/`](baseline_bakeoff/outputs/diffir/)
-- 官方 yaml + 分块兜底：[`baseline_bakeoff/outputs/diffir_official/`](baseline_bakeoff/outputs/diffir_official/)（与上一组 SHA-256 相同）
-- 报告：[`baseline_bakeoff/BACKBONE_SELECTION_REPORT.md`](baseline_bakeoff/BACKBONE_SELECTION_REPORT.md)
+| `main` | 当前默认：整理后的目录 + HYPIR 实验 + DiffIR bakeoff |
+| `baseline-2-diffir-motion-deblurring` | 合入前的 DiffIR bakeoff 快照 |
+| `repo-hygiene-and-official-diffir` | 合入 `main` 前的整理 + 官方 yaml 复现分支 |
 
 ## DiffIR 复现说明
 
