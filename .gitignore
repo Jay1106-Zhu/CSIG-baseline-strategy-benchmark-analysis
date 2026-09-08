@@ -1,3 +1,12 @@
 __pycache__/
 *.py[cod]
+*$py.class
+*.so
+
+.conda/
+model_cache/
+.planning/
+*.zip
+
 baseline_bakeoff_preview.jpg
+baseline_bakeoff/datasets/
