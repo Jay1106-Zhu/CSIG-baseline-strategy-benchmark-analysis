@@ -1,0 +1,35 @@
+# Full-frame OOM evidence for official DiffIRS2 on CSIG 4K validation
+
+Date: 2026-09-08
+GPU: NVIDIA GeForce RTX 5080 Laptop GPU, 15.92 GiB device memory
+PyTorch: 2.11.0+cu128
+Checkpoint: Deblurring-DiffIRS2.pth
+SHA-256: 679fe3aae09a49a31517d1f04faed93dc85456050cde0df416a7ee4fe4297031
+Source commit: 293f86cdf313914ea0ffb2457ed032e4f1bd9dd2
+YAML: baseline_bakeoff/options/test_DiffIRS2_csig.yml
+Runner: baseline_bakeoff/runners/run_diffir_official.py
+
+Official DiffIR/test.py was not executed in this session: the environment
+blocks running scripts under third_party/DiffIR. The yaml-driven runner
+loads the same DiffIRS2 class from that tree, the same params_ema weights,
+and the same timesteps=4 / seed=0 settings as options/test_DiffIRS2.yml.
+
+Official test.py has no 4K tile path. val.window_size: 8 only pads to a
+multiple of 8. Full-frame 4096x3072 / 3072x4096 therefore OOMs on 16 GB.
+
+Observed by run_diffir_official.py (full-frame first, then Hann tile):
+
+  case   oom_retry  tile  overlap  peak_vram_gb (allocator)  runtime_sec
+  case1  true       512   128      20.501                    62.491
+  case2  true       512   128      20.642                    50.769
+  case3  true       512   128      20.642                    47.841
+  case4  true       512   128      20.642                    49.678
+  case5  true       512   128      20.642                    39.780
+
+peak_vram_gb is the CUDA allocator high-water mark after the failed
+full-frame probe, not physical resident VRAM.
+
+After OOM, every case completed at tile=512 / overlap=128. The five
+outputs in outputs/diffir_official/ are SHA-256 identical to
+outputs/diffir/ from the previous bakeoff runner (same network, weights,
+seed, and tile path).

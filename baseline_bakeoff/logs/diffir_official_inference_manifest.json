@@ -1,0 +1,75 @@
+{
+  "model": "DiffIR Motion Deblurring (official yaml)",
+  "stage": "DiffIRS2",
+  "checkpoint": "D:\\MyProjects\\CSIG\\model_cache\\diffir_motion_deblurring\\Deblurring-DiffIRS2.pth",
+  "checkpoint_sha256": "679fe3aae09a49a31517d1f04faed93dc85456050cde0df416a7ee4fe4297031",
+  "source_commit": "293f86cdf313914ea0ffb2457ed032e4f1bd9dd2",
+  "input_dir": "D:\\MyProjects\\CSIG\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\baseline\\input",
+  "output_dir": "D:\\MyProjects\\CSIG\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\baseline_bakeoff\\outputs\\diffir_official",
+  "config": {
+    "opt": "D:\\MyProjects\\CSIG\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\baseline_bakeoff\\options\\test_DiffIRS2_csig.yml",
+    "timesteps": 4,
+    "tile": null,
+    "overlap": 128,
+    "param_key": "params_ema",
+    "official_test_py": "DiffIR/test.py full-frame first; Hann tile fallback after OOM"
+  },
+  "environment": {
+    "torch": "2.11.0+cu128",
+    "device": "cuda"
+  },
+  "seed": 0,
+  "gt_used_during_inference": false,
+  "cases": [
+    {
+      "case": "case1",
+      "input": "D:\\MyProjects\\CSIG\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\baseline\\input\\case1_lq.jpg",
+      "output": "D:\\MyProjects\\CSIG\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\baseline_bakeoff\\outputs\\diffir_official\\case1_lq.png",
+      "runtime_sec": 62.490806200075895,
+      "peak_vram_gb": 20.50144863128662,
+      "tile": 512,
+      "overlap": 128,
+      "oom_retry": true
+    },
+    {
+      "case": "case2",
+      "input": "D:\\MyProjects\\CSIG\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\baseline\\input\\case2_lq.jpg",
+      "output": "D:\\MyProjects\\CSIG\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\baseline_bakeoff\\outputs\\diffir_official\\case2_lq.png",
+      "runtime_sec": 50.768995399586856,
+      "peak_vram_gb": 20.64207363128662,
+      "tile": 512,
+      "overlap": 128,
+      "oom_retry": true
+    },
+    {
+      "case": "case3",
+      "input": "D:\\MyProjects\\CSIG\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\baseline\\input\\case3_lq.jpg",
+      "output": "D:\\MyProjects\\CSIG\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\baseline_bakeoff\\outputs\\diffir_official\\case3_lq.png",
+      "runtime_sec": 47.84090130031109,
+      "peak_vram_gb": 20.64207363128662,
+      "tile": 512,
+      "overlap": 128,
+      "oom_retry": true
+    },
+    {
+      "case": "case4",
+      "input": "D:\\MyProjects\\CSIG\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\baseline\\input\\case4_lq.jpg",
+      "output": "D:\\MyProjects\\CSIG\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\baseline_bakeoff\\outputs\\diffir_official\\case4_lq.png",
+      "runtime_sec": 49.67782309977338,
+      "peak_vram_gb": 20.64207363128662,
+      "tile": 512,
+      "overlap": 128,
+      "oom_retry": true
+    },
+    {
+      "case": "case5",
+      "input": "D:\\MyProjects\\CSIG\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\baseline\\input\\case5_lq.jpg",
+      "output": "D:\\MyProjects\\CSIG\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\CSIG_baseline_strategy_benchmark_analysis_2026-09-06\\baseline_bakeoff\\outputs\\diffir_official\\case5_lq.png",
+      "runtime_sec": 39.779621499590576,
+      "peak_vram_gb": 20.64207363128662,
+      "tile": 512,
+      "overlap": 128,
+      "oom_retry": true
+    }
+  ]
+}

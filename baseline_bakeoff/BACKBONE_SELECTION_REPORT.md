@@ -14,7 +14,8 @@ Only the following models were run:
 | --- | --- |
 | Identity | decoded LQ input floor/reference |
 | HYPIR-50 | existing diffusion reference (`model_t=200`, `coeff_t=50`) |
-| DiffIR-DiffIRS2 | official motion-deblurring diffusion baseline |
+| DiffIR-DiffIRS2 | motion-deblurring diffusion baseline (local runner) |
+| DiffIROfficial | same DiffIRS2, loaded from official test yaml |
 
 EVSSM and DiffBIR were intentionally not run after the scope was narrowed to
 DiffIR Motion Deblurring. Therefore this report does not claim a winner among
@@ -26,7 +27,7 @@ all four models named in the original bake-off prompt.
 - PyTorch 2.11.0+cu128, CUDA 12.8
 - NVIDIA GeForce RTX 5080 Laptop GPU (15.92 GiB reported device memory)
 - Five RGB validation LQ images, evaluated at their native dimensions
-- Repository branch: `baseline-2-diffir-motion-deblurring`
+- Repository branch: `repo-hygiene-and-official-diffir`
 - Published base snapshot: `50ae047`
 
 The repository contains source, result tables, visual evidence, and manifests;
@@ -53,18 +54,22 @@ image itself. No HYPIR source, checkpoint, or prior experiment was modified.
 
 ## 4 Inference Settings
 
-DiffIR was called with LQ only. The runner never loads or passes GT to the
-model. It decodes image content as RGB, preserves the original dimensions, and
-uses the official DiffIRS2 four-timestep configuration. The reported rerun
-uses the official fixed inference seed `0` (`manual_seed: 0` in the official
-test configuration); the seed is recorded in both inference and project
-manifests.
+DiffIR was called with LQ only. Neither runner loads or passes GT to the
+model. Both decode RGB, preserve native dimensions, and use DiffIRS2 with four
+timesteps and seed `0` (`manual_seed: 0` in the official test yaml).
 
-Full-frame inference was attempted first for every case. Each 4K case hit CUDA
-OOM, then succeeded with deterministic weighted tiling using `tile=512` and
-`overlap=128` (Hann-window blending). The fallback order was 512, 384, 256;
-384 and 256 were not needed. Per-case runtime and retry fields are recorded in
-`logs/diffir_inference_manifest.json`.
+The original bakeoff runner hard-codes the network kwargs. The official-yaml
+runner (`runners/run_diffir_official.py`) reads
+`options/test_DiffIRS2_csig.yml`, which is a copy of official
+`test_DiffIRS2.yml` with CSIG paths and the local `Deblurring-DiffIRS2.pth`.
+`scale: 4` is CPEN PixelUnshuffle, not output upscaling. `window_size: 8`
+only pads to a multiple of 8; official `DiffIR/test.py` has no 4K tile path.
+
+Full-frame inference OOMed on every 4K case. Both runners then used Hann
+`tile=512` / `overlap=128`. The five `outputs/diffir_official` PNGs are
+SHA-256 identical to `outputs/diffir`. Quality metrics are therefore the
+same; only wall-clock times differ. See
+`logs/diffir_official_fullframe_oom.log`.
 
 The benchmark reads GT only after all DiffIR outputs are present. PSNR and SSIM
 use native resolution. LPIPS-Alex and DISTS use the same deterministic
@@ -81,6 +86,7 @@ Average results from `results_average.csv`:
 | Identity | 28.0344 | 0.7777 | 0.2313 | 0.1798 |
 | HYPIR-50 | **28.2575** | 0.7769 | **0.1808** | **0.1608** |
 | DiffIR-DiffIRS2 | 27.7922 | 0.7753 | 0.2047 | 0.1790 |
+| DiffIROfficial | 27.7922 | 0.7753 | 0.2047 | 0.1790 |
 
 HYPIR-50 has the strongest average PSNR, LPIPS, and DISTS in this five-case
 comparison. Identity has the highest average SSIM by a small margin. DiffIR is
@@ -120,7 +126,8 @@ qualitative evidence rather than converted into a score.
 
 ## 8 4K Runtime and VRAM
 
-DiffIR took 47.39 to 65.36 seconds per case (mean 55.05 seconds). All five
+The original DiffIR runner took 47.39 to 65.36 seconds per case (mean 55.05).
+The official-yaml runner took 39.78 to 62.49 seconds (mean 50.11). All five
 cases required the same OOM retry and `512/128` tiled execution. The manifest's
 `peak_vram_gb` is the CUDA allocator high-water mark after the failed full-frame
 probe (about 20.5 to 20.64 GB), not physical resident VRAM; the GPU reports
@@ -168,7 +175,12 @@ larger, held-out evaluation set. Within this run, the evidence supports:
 
 ## Reproduction and Artifact Index
 
-- Runner: `baseline_bakeoff/runners/run_diffir.py`
+- Original runner: `baseline_bakeoff/runners/run_diffir.py`
+- Official yaml runner: `baseline_bakeoff/runners/run_diffir_official.py`
+- Official yaml: `baseline_bakeoff/options/test_DiffIRS2_csig.yml`
+- Official outputs: `baseline_bakeoff/outputs/diffir_official/`
+- Official inference manifest: `baseline_bakeoff/logs/diffir_official_inference_manifest.json`
+- Full-frame OOM note: `baseline_bakeoff/logs/diffir_official_fullframe_oom.log`
 - Benchmark: `baseline_bakeoff/benchmark.py`
 - Run manifest: `baseline_bakeoff/run_manifest.json`
 - DiffIR inference manifest: `baseline_bakeoff/logs/diffir_inference_manifest.json`

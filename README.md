@@ -49,7 +49,7 @@ tests/                    bakeoff 契约测试
 看 DiffIR 输出请打开：
 
 - 既有本地 runner：[`baseline_bakeoff/outputs/diffir/`](baseline_bakeoff/outputs/diffir/)
-- 官方 yaml + 分块兜底：[`baseline_bakeoff/outputs/diffir_official/`](baseline_bakeoff/outputs/diffir_official/)（本分支后续提交）
+- 官方 yaml + 分块兜底：[`baseline_bakeoff/outputs/diffir_official/`](baseline_bakeoff/outputs/diffir_official/)（与上一组 SHA-256 相同）
 - 报告：[`baseline_bakeoff/BACKBONE_SELECTION_REPORT.md`](baseline_bakeoff/BACKBONE_SELECTION_REPORT.md)
 
 ## DiffIR 复现说明
@@ -61,6 +61,7 @@ tests/                    bakeoff 契约测试
 1. 用官方 yaml 的网络结构、`params_ema`、`timesteps: 4`、`manual_seed: 0` 和 pin 过的 S2 权重。
 2. 先尝试全图；OOM 后用 Hann 加权 `tile=512 / overlap=128`（与 bakeoff runner 相同的内存兜底）。
 3. 配置见 `baseline_bakeoff/options/test_DiffIRS2_csig.yml`。
+4. 2026-09-08 复现：五张 `outputs/diffir_official` 与 `outputs/diffir` 逐字节相同；平均 PSNR 仍为 27.79，低于 Identity。
 
 这不是 `sh test.sh` 的逐行复现，而是官方配置 + 显存兜底。任务不匹配仍然成立：运动去模糊权重打在轻退化 4K 增强上，改动弱、PSNR 低于 Identity 是预期。
 
