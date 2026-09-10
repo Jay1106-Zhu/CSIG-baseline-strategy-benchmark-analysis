@@ -12,11 +12,12 @@
 - 视觉上 LQ 与 GT 保持同一构图，GT 主要提升锐度、局部纹理、对比度和色彩；文字/钟表等几何结构不能依赖自由生成。
 - 代理统计（LQ 对 GT）：case1 PSNR 32.03 dB、case2 28.19 dB、case3 35.62 dB、case4 18.06 dB、case5 26.28 dB；绿植 case4 退化最重，鸟类 case3 相对较轻。
 
-## 建模判断
-- 不建议直接对整张 4K 图做高强度 img2img：显存、速度和内容漂移风险都高。
-- 采用低噪声、低 denoise 的 latent diffusion/SD 类超分或 restoration 模型作为主干，结合重叠分块；全局残差混合保留原图颜色和结构。
-- 对文字、钟表、人脸等可识别区域，优先使用检测/显著性区域的低强度增强，并设置结构保持约束；对绿植、鸟羽等纹理区允许更高细节恢复强度。
-- 训练数据应由高质量图像人工合成退化（高斯/运动模糊、JPEG、噪声、降采样、色偏、局部遮挡），模拟验证集退化；仅 5 对真实验证图不足以监督训练。
+## 建模判断（2026-09-09/10 更新）
+- **现行计划：** [`CURRENT_PLAN.md`](CURRENT_PLAN.md)。旧 DAS-V1（blur↑→生成↑）已废止。
+- HYPIR-200 是确定性映射（四 seed 两两 PSNR 39.5–39.9 dB）。case4 主因是中频错误植物（E1 高需求 A=7/8），不是合理叶脉重采样，也不是抽样方差。
+- 全图融合 α=0.2 均 PSNR 28.45，打平但赢不了 `texture_selective` 28.48。下一件唯一实验是残差置信融合（大残差不信 H200）。
+- 分块（非重叠 256，960 块）：case3 块均值 ΔPSNR −8.93（平坦水面被造纹理）；case4 三层 ΔPSNR 几乎一样（约 −1.6 dB）且块 LPIPS 更好。块 LPIPS ≠ 全图 1024 LPIPS。
+- 不建议在模糊区加强生成。文字/钟表优先少改；绿植要压错误中频和大残差幻觉，不是追 GT 叶脉。
 
 ## Scenario Routing v1 现有结果来源
 - `baseline/experiments/structure_local_restoration_v1/metrics.csv` 已包含 case1-case5 的 LQ、HYPIR-50、HYPIR-200、`texture_selective_h200` 整图 PSNR/SSIM/LPIPS-Alex；其 Average 行给出当前基线 `texture_selective_h200` = 28.480280 / 0.781421 / 0.164546。

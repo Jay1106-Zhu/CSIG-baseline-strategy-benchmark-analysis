@@ -205,6 +205,18 @@ E3-A complete; stop here and report the fixed-scope result. Do not start E3-B/E3
 ## Next Step
 Handoff archive verified; deliver `CSIG_team_handoff_2026-09-04.zip` and its size/hash summary.
 
+## Phase 14: HYPIR-200 error decomposition (E0–E4)
+- [x] Freeze FR metrics (PSNR/SSIM native, LPIPS max-side 1024)
+- [x] Stratified 256 patch labels on case4 (24) and case3 (12); high-demand A=7/8
+- [x] Multi-scale 1×…1/16 PSNR + visual panels
+- [x] LQ–H200 blend curve vs H50 (global α fusion already done; stop as final method)
+- [x] case4 multi-seed 17/89/401; deterministic mapping, fish/wrong leaves locked
+- [x] Full non-overlap 256 grid PSNR/SSIM/LPIPS (960 tiles)
+- [x] Write `error_decomposition_v1/report.md`; replace DAS-V1 with `CURRENT_PLAN.md`
+
+## Next Step
+Run Exp-F1 residual-confidence fusion only (`CURRENT_PLAN.md`). Do not re-run global α, more seeds, blur-up Adapter, or 100-test until F1 gates.
+
 ## Errors Encountered
 | Error | Attempt | Resolution |
 |---|---:|---|

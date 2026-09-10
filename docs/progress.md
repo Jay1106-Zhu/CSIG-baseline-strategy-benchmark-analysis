@@ -209,3 +209,17 @@
 - Built `team_handoff/` with 257 files: source and tests, reports and research notes, non-image metrics/metadata, five validation LQ/GT pairs, and six downscaled comparison previews.
 - Handoff tree size is 22,275,790 bytes (21.24 MiB); outer archive `CSIG_team_handoff_2026-09-04.zip` is 19,162,580 bytes before the final documentation sync.
 - ZIP entry audit passed: no `.conda`, `.cache`, model/weight directories, HYPIR `.git`, full test set, or bulk PNG outputs are present. Original artifacts were not deleted or modified.
+
+## 2026-09-09 — HYPIR-200 error decomposition E0–E4
+- Offline diagnosis in `baseline/experiments/error_decomposition_v1/`. No HYPIR source edits.
+- E1: case4 high-demand 8 patches A=7/B=1/C=0; fish head at mid04. Case3 is C-dominant (water grain), not the same disease.
+- E2: case4 1/16 still the same tree; 1/8 missing yellow flowers; local 256 already wrong leaf type.
+- E3: global LQ–H200 blend peaks at α=0.2, PSNR 28.45 vs texture_selective 28.48. Stop global fusion as the final method.
+- E4: seeds 17/89/401 vs 231; pairwise PSNR 39.5–39.9 dB; same serrated leaves, catkins, and fish. Deterministic mapping bias.
+- Replaced DAS-V1 with `CURRENT_PLAN.md`. Next: Exp-F1 residual-confidence fusion only.
+
+## 2026-09-10 — Non-overlap 256 tile metrics
+- `compute_patch_metrics.py`: 192 tiles/case, 960 total. Native PSNR/SSIM; LPIPS-Alex on 256 crops (not 1024 protocol).
+- Block-mean ΔPSNR H200 vs LQ: case1 −4.66, case2 −3.83, case3 −8.93, case4 −1.64, case5 −2.52. Case1/3 block means worse than full-image because flat tiles get dirty.
+- Case4 LPIPS better on all three gradient strata; ΔPSNR almost uniform. Case3 low/mid water tiles are the worst PSNR hits.
+- CSVs: `patch_metrics_full.csv`, `patch_metrics_summary.csv`, `e1_patch_metrics.csv`. Synced into `report.md` and `CURRENT_PLAN.md`.

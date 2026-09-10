@@ -1,12 +1,12 @@
 # CSIG 项目交接报告
 
-报告日期：2026-09-01  
+报告日期：2026-09-01（问题定义与计划已于 2026-09-09/10 更新）  
 工作目录：`D:\MyProjects\CSIG`  
-范围：仅基于当前文件、代码、CSV、输出图片、模型元数据和 Git 状态检查；本次未修改 HYPIR 源码、未下载模型、未运行新的推理实验。
+**现行计划：** [`CURRENT_PLAN.md`](CURRENT_PLAN.md)。误差分解：`baseline/experiments/error_decomposition_v1/report.md`。
 
 ## Executive status
 
-当前项目已完成 HYPIR-SD2 的可复现 baseline 闭环：本地环境、LoRA、一个测试集 evaluation 侦察样本、五张带 GT 的 evaluation/验证集样本、对比图和指标 CSV 都已存在。baseline 使用官方 HYPIR `test.py`，但使用的是公开镜像 base，而不是 README 指定的 `stabilityai/stable-diffusion-2-1-base`。在固定 seed=231、`model_t=200`、`coeff_t=200` 的当前设置下，五张验证图的平均 PSNR/SSIM 下降，平均 LPIPS 变差；因此当前结果是跑通和风险侦察结果，不是可直接提交的参数结论。
+HYPIR-SD2 baseline 已闭环。当前 HYPIR 系提交锚是 `texture_selective_h200`（均 PSNR 28.48）。HYPIR-200 是确定性错误中频映射（E1 A=7/8，E4 四 seed 同鱼头），不是「模糊处该加强生成」。旧 DAS-V1 已废止。下一件唯一实验是残差置信融合（Exp-F1）。分块 960 块指标已写入 `error_decomposition_v1/patch_metrics_summary.csv`。
 
 ## 证据索引（Evidence -> Finding -> Path）
 
