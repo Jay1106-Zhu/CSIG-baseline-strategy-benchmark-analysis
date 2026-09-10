@@ -214,8 +214,15 @@ Handoff archive verified; deliver `CSIG_team_handoff_2026-09-04.zip` and its siz
 - [x] Full non-overlap 256 grid PSNR/SSIM/LPIPS (960 tiles)
 - [x] Write `error_decomposition_v1/report.md`; replace DAS-V1 with `CURRENT_PLAN.md`
 
+## Phase 15: HYPIR output-space fusion v1
+- [x] Independent module under `baseline/experiments/hypir_fusion_v1/` (no HYPIR source edits, no LoRA/Adapter/new models)
+- [x] Scheme A (`base=LQ`) and scheme B (`base=H50`); Y-channel residual; LQ chroma
+- [x] Sobel structure mask at 1/4 + scene-specific manual alpha
+- [x] Unit tests and validation case1-case5 with PSNR/SSIM/LPIPS_1024
+- [x] Write fusion/mask/heatmap/crops and `results/fusion_v1/report.md`
+
 ## Next Step
-Run Exp-F1 residual-confidence fusion only (`CURRENT_PLAN.md`). Do not re-run global α, more seeds, blur-up Adapter, or 100-test until F1 gates.
+fusion_A 均 PSNR 28.46，未过门槛。Fusion 是降权压回模糊，不是识别删除鱼头。V1.1：`M_final = structure_mask × residual_penalty`（不要单独用大残差，会杀文字）。不要开 LoRA / 100 张。
 
 ## Errors Encountered
 | Error | Attempt | Resolution |

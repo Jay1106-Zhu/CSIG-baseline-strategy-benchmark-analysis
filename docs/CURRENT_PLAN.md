@@ -99,6 +99,12 @@ CSV：`error_decomposition_v1/patch_metrics_full.csv`、`patch_metrics_summary.c
 
 若 fusion 无效（已经对全局成立）：说明 **H200 的错误中频不能靠均匀稀释消除**——要么空间上丢掉大残差区，要么改映射。
 
+### hypir_fusion_v1（2026-09-10，已跑，不是 F1 本身）
+
+用户指定的 output-space 融合：Y 通道 `base + α_scene · mask · (H200−base)`，mask = 1/4 Sobel cosine × 幅值相似度，Cb/Cr 锁 LQ。方案 A 底板 LQ，方案 B 底板 H50。
+
+结果：`baseline/experiments/hypir_fusion_v1/results/fusion_v1/report.md`。fusion_A 均 PSNR **28.46**（锚 28.48，门槛 28.53）。Fusion 不是识别并删除鱼头，而是降低 H200 权重把生成压回模糊；Sobel mask 只切新强边缘。F1 不要单独用大残差当坏（会杀文字），应用 `structure_mask × residual_penalty`。
+
 ### Exp-F1（下一件唯一的新实验）
 
 **残差置信融合（不用 blur map）。**

@@ -2,7 +2,7 @@
 
 赛道一：同分辨率 4K 图像增强（Diffusion）。验证集 5 对 LQ/GT；测试集 100 张无 GT。
 
-**一眼看懂：** HYPIR-200 更清晰，但 PSNR 全面掉。诊断结论是 **确定性错误中频映射**（错叶型、锁死鱼头），不是随机抽样，也不是「模糊处该加强生成」。当前提交锚是 `texture_selective_h200`（均 PSNR **28.48**）。下一件实验是残差置信融合，不是旧 DAS blur-up Adapter。
+**一眼看懂：** HYPIR-200 更清晰，但 PSNR 全面掉。诊断结论是 **确定性错误中频映射**（错叶型、锁死鱼头），不是随机抽样，也不是「模糊处该加强生成」。当前提交锚是 `texture_selective_h200`（均 PSNR **28.48**）。output-space fusion v1 均 PSNR 28.46：不是识别删除鱼头，而是降权把生成压回模糊。下一件是 `structure_mask × residual_penalty`，不是单独残差，也不是旧 DAS blur-up Adapter。
 
 ---
 
@@ -15,6 +15,7 @@
 | 全局混合 H200 最多打平锚（α=0.2 → 28.45） | E3 |
 | 四 seed 几乎同一张图（两两 PSNR 39.5–39.9），鱼头不变 | E4 |
 | 块级：case3 平坦水面 ΔPSNR −8.9；case4 三层均匀约 −1.6 dB，LPIPS 更好 | 960 块网格 |
+| fusion_A 均 PSNR 28.46；降权压回模糊，不是识别删除鱼头 | hypir_fusion_v1 |
 
 完整报告：[`baseline/experiments/error_decomposition_v1/report.md`](baseline/experiments/error_decomposition_v1/report.md)  
 现行计划：[`docs/CURRENT_PLAN.md`](docs/CURRENT_PLAN.md)（取代已废止的 `DAS_HYPIR_final_plan.md`）
@@ -26,6 +27,8 @@
 | Identity / LQ | 28.03 | **0.778** | 下限 |
 | HYPIR-50 | 28.26 | 0.777 | 少改 |
 | **texture_selective_h200** | **28.48** | **0.781** | 当前 HYPIR 系锚 |
+| fusion_A（LQ + α·mask·H200，Y 通道） | 28.46 | 0.782 | 保守降权，未过门槛 |
+| fusion_B（H50 底板） | 28.26 | 0.779 | LPIPS 最好（0.156） |
 | H50+SwinIR α=0.6 | 28.51 | 0.784 | PSNR 最高；主提交需 Diffusion |
 | HYPIR-200 | 24.53 | 0.685 | 不可直接交 |
 | DiffIR-S2 | 27.79 | 0.775 | 运动去模糊权重，弱对照 |
@@ -43,10 +46,14 @@
 | **E2 多尺度** | case4 1×…1/16：粗布局对、黄花层缺 | [`e2_multiscale/case4/`](baseline/experiments/error_decomposition_v1/e2_multiscale/case4/) |
 | E3 混合预览 | case4 α=0 / 0.3 / 0.5 / 1.0 | [`e3_previews/`](baseline/experiments/error_decomposition_v1/e3_previews/) |
 | **E4 四 seed 局部** | 同一套锯齿叶 / 柔荑花序 / 鱼头 | [`e4_analysis/key_crops.png`](baseline/experiments/error_decomposition_v1/e4_analysis/key_crops.png) |
+| **fusion v1 鱼头** | 不是删除鱼头：α=0.08 把 H200 生成压回模糊粉团 | [`crops/case4_mid04_fish.png`](baseline/experiments/hypir_fusion_v1/results/fusion_v1/crops/case4_mid04_fish.png) |
+| fusion v1 水面 | 假波纹变弱（小 α，不是 mask 切出） | [`crops/case3_low02_water.png`](baseline/experiments/hypir_fusion_v1/results/fusion_v1/crops/case3_low02_water.png) |
+| fusion v1 五图面板 | LQ \| H50 \| H200 \| Fusion-A/B \| GT | [`comparison/`](baseline/experiments/hypir_fusion_v1/results/fusion_v1/comparison/) |
 
-脚本与 CSV 同目录：`run_error_decomposition.py`、`e1_labels.csv`、`e3_blend_curve.csv`、`patch_metrics_summary.csv`。
+脚本与 CSV 同目录：`run_error_decomposition.py`、`e1_labels.csv`、`e3_blend_curve.csv`、`patch_metrics_summary.csv`。  
+fusion v1：[`hypir_fusion_v1/`](baseline/experiments/hypir_fusion_v1/)（`fusion.py`、`experiment.py`、`metrics.csv`、`report.md`）。
 
-未上传：4K 全分辨率 H200/H50 PNG、E4 的 22MB mean/median 全图、HYPIR/DiffIR 权重、`.conda`、测试集 100 张。
+未上传：4K 全分辨率 H200/H50 PNG、fusion 的 4K 输出/mask/heatmap（约 300 MB，见 `LOCAL_ONLY.txt`）、E4 的 22MB mean/median 全图、HYPIR/DiffIR 权重、`.conda`、测试集 100 张。
 
 ---
 
@@ -57,6 +64,7 @@ README.md                          本文件
 docs/CURRENT_PLAN.md               现行比赛计划（下一件：Exp-F1）
 docs/赛题.txt                      赛题原文
 baseline/experiments/error_decomposition_v1/   E1–E4 诊断（代码+CSV+精选图）
+baseline/experiments/hypir_fusion_v1/          输出空间融合（代码+指标+拼图+crops）
 baseline/                          更早的 HYPIR 实验、指标、三联图
 baseline_bakeoff/                  DiffIR 对照
 csig_dataset/验证集/               5 对 LQ/GT
@@ -68,6 +76,7 @@ tests/                             契约测试
 |---|---|
 | 问题定义与下一步 | [`docs/CURRENT_PLAN.md`](docs/CURRENT_PLAN.md) |
 | E1–E4 报告 | [`error_decomposition_v1/report.md`](baseline/experiments/error_decomposition_v1/report.md) |
+| fusion v1 报告 | [`hypir_fusion_v1/results/fusion_v1/report.md`](baseline/experiments/hypir_fusion_v1/results/fusion_v1/report.md) |
 | HYPIR-50 输出 | [`baseline/experiments/coeff_t_50/output/result/`](baseline/experiments/coeff_t_50/output/result/) |
 | DiffIR 对照报告 | [`baseline_bakeoff/BACKBONE_SELECTION_REPORT.md`](baseline_bakeoff/BACKBONE_SELECTION_REPORT.md) |
 | 验证集 | [`csig_dataset/验证集/`](csig_dataset/验证集/) |

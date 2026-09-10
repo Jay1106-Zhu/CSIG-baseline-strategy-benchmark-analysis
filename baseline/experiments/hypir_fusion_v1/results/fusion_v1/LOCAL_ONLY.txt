@@ -1,0 +1,4 @@
+Uploaded: comparison panels, diagnostic crops, metrics.csv, reports.
+Kept local (4K native, ~300 MB): fusion/A, fusion/B, masks/, heatmaps/.
+Regenerate with:
+  .conda/python.exe baseline/experiments/hypir_fusion_v1/experiment.py --root .

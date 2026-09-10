@@ -223,3 +223,11 @@
 - Block-mean ΔPSNR H200 vs LQ: case1 −4.66, case2 −3.83, case3 −8.93, case4 −1.64, case5 −2.52. Case1/3 block means worse than full-image because flat tiles get dirty.
 - Case4 LPIPS better on all three gradient strata; ΔPSNR almost uniform. Case3 low/mid water tiles are the worst PSNR hits.
 - CSVs: `patch_metrics_full.csv`, `patch_metrics_summary.csv`, `e1_patch_metrics.csv`. Synced into `report.md` and `CURRENT_PLAN.md`.
+
+## 2026-09-10 — HYPIR fusion v1
+- Independent offline module `baseline/experiments/hypir_fusion_v1/`. 10 unit tests pass. HYPIR tracked source unchanged.
+- Reused `coeff_t_50` / `coeff_t_200` PNGs. Scheme A: LQ + α·mask·(H200−LQ) on Y, LQ chroma. Scheme B uses H50 as base.
+- Manual scene α: text 0.25, book 0.30, bird 0.12, plant 0.08, clock 0.30. Structure mask = 1/4 Sobel cosine × magnitude similarity.
+- Average PSNR/SSIM/LPIPS_1024: LQ 28.034/0.778/0.204; H50 28.258/0.777/0.162; H200 24.529/0.685/0.160; fusion_A **28.460/0.782/0.189**; fusion_B 28.256/0.779/0.156; texture_selective 28.480/0.781/0.165.
+- Visual: Fusion does not detect/delete the fish head; plant α=0.08 attenuates the H200 residual so the eye/contour collapse back to a pink blur. Sobel mask suppresses new strong edges (serrated leaves) but not smooth-region semantics. Case3 water grain fades for the same reason (bird α=0.12). Text/clock structure held.
+- Did not beat the texture_selective +0.05 dB gate. Report: `baseline/experiments/hypir_fusion_v1/results/fusion_v1/report.md`.

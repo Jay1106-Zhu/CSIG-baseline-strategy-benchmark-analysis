@@ -15,7 +15,8 @@
 ## 建模判断（2026-09-09/10 更新）
 - **现行计划：** [`CURRENT_PLAN.md`](CURRENT_PLAN.md)。旧 DAS-V1（blur↑→生成↑）已废止。
 - HYPIR-200 是确定性映射（四 seed 两两 PSNR 39.5–39.9 dB）。case4 主因是中频错误植物（E1 高需求 A=7/8），不是合理叶脉重采样，也不是抽样方差。
-- 全图融合 α=0.2 均 PSNR 28.45，打平但赢不了 `texture_selective` 28.48。下一件唯一实验是残差置信融合（大残差不信 H200）。
+- 全图融合 α=0.2 均 PSNR 28.45，打平但赢不了 `texture_selective` 28.48。
+- **hypir_fusion_v1（2026-09-10）：** 方案 A 均 PSNR 28.46 / SSIM 0.782 / LPIPS_1024 0.189。Fusion 不是识别并删除鱼头，而是降低 H200 残差权重，把高置信度生成压回模糊。Sobel mask 能压新强边缘，压不了平滑区语义。未过锚点 +0.05 dB。V1.1：`M_final = structure_mask × residual_penalty`（大残差本身不够，否则文字也会被杀）。
 - 分块（非重叠 256，960 块）：case3 块均值 ΔPSNR −8.93（平坦水面被造纹理）；case4 三层 ΔPSNR 几乎一样（约 −1.6 dB）且块 LPIPS 更好。块 LPIPS ≠ 全图 1024 LPIPS。
 - 不建议在模糊区加强生成。文字/钟表优先少改；绿植要压错误中频和大残差幻觉，不是追 GT 叶脉。
 
