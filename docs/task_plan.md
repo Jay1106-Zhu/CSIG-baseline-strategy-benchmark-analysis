@@ -107,6 +107,48 @@ Training feasibility audit complete. Do not start implementation until the user 
 ## Next Step
 Scenario Routing v1 failed the average PSNR/SSIM/LPIPS gate; stop routing and report conclusion B. Do not train a classifier, add diffusion inference, or tune rules on the five validation cases.
 
+## Phase 10: HYPIR fusion v2 residual confidence mask (F1)
+- [x] Add failing tests for residual confidence, M_struct * conf^gamma, and independent fusion_v2 artifacts
+- [x] Implement `baseline/experiments/hypir_fusion_v2/` without modifying HYPIR or overwriting fusion_v1
+- [x] Reuse existing LQ/H50/H200 PNGs; no diffusion, training, LoRA, classifier, or new depth model
+- [x] Run only validation case1-case5 with mask groups A/B/C/D plus gamma=0.5
+- [x] Write results/fusion_v2/ (final/struct/conf masks, residual heatmap, fusion, crops, metrics.csv)
+- [x] Inspect case4 fish-head, case3 water, case1/5 text+clock; write report.md vs texture_selective 28.48
+
+## Next Step
+F1 failed the 28.48 gate. Report the fusion_v2 artifacts and stop stacking output-space masks.
+
+## Phase 11: HYPIR process-level control audit (no new fusion)
+- [x] Read HYPIR enhancer/test/trainer/scheduler; map every inference knob from code
+- [x] Select at most 2 real generation-freedom parameters; do not invent new ones
+- [x] Do not re-run completed coeff_t/model_t inference; reuse existing 5-case PNGs
+- [x] Independent package `baseline/experiments/hypir_process_control_v1/`
+- [x] Re-score vs texture_selective 28.48 with LPIPS_1024 and unified diagnostic crops
+- [x] Answer the 5 process-control questions with a single yes/no decision
+
+## Next Step
+Process control is at its inference ceiling. Do not sweep coeff_t again. Next stage, if authorized, is LoRA/Adapter on the mapping — not this round.
+
+## Phase 12: LoRA feasibility audit (no training)
+- [x] Inventory every local image set; do not guess counts
+- [x] Trace HYPIR dataset loader: GT-only vs paired LQ/GT
+- [x] Trace SD2Trainer LoRA inject, freeze, loss, timesteps
+- [x] Compare official Real-ESRGAN degradation to CSIG 4K same-res
+- [x] Write GO/NO-GO without training or downloads
+
+## Next Step
+NO-GO LoRA. Keep texture_selective_h200. Do not train, do not download LSDIR, do not finetune the 5 val pairs.
+
+## Phase 13: fusion_v3 multi-band (last output-space test)
+- [x] Reuse fusion_v1 YCbCr; Laplacian pyramid only (not FFT/DCT/HYPIR 2-band wavelet)
+- [x] Independent `hypir_fusion_v3/`; do not overwrite v1/v2/texture_selective
+- [x] Variants B/C/D with α_mid in {0.1, 0.2}; visualize LQ/H200 low-mid-high on case4
+- [x] 5-case PSNR/SSIM/LPIPS vs 28.48; same diagnostic crops
+- [x] GO or NO-GO multi-band; if NO-GO freeze the anchor
+
+## Next Step
+NO-GO multi-band. Freeze texture_selective_h200. Stop output-space tuning. Prepare test-set inference engineering if authorized.
+
 ## 对比工具用法
 
 ### Evaluation 二联图

@@ -1,0 +1,76 @@
+{
+  "time": "2026-09-11T17:42:03",
+  "input_inventory": {
+    "count": 100,
+    "missing": [],
+    "duplicate": [],
+    "extra": [],
+    "non_jpg": [],
+    "bad_mode": [],
+    "sizes": {
+      "4096x3072": 71,
+      "3072x4096": 29
+    }
+  },
+  "dry_run_case": "case1",
+  "note": "test case1 is not the validation image; no scene table is consulted",
+  "lq": {
+    "path": "D:\\MyProjects\\CSIG\\baseline\\experiments\\final_test_inference\\dry_run\\lq\\case1.jpg",
+    "mode": "RGB",
+    "size": [
+      4096,
+      3072
+    ],
+    "bytes": 2736786,
+    "finite": true,
+    "min": 0,
+    "max": 255
+  },
+  "h200": {
+    "path": "D:\\MyProjects\\CSIG\\baseline\\experiments\\final_test_inference\\dry_run\\h200\\result\\case1.png",
+    "mode": "RGB",
+    "size": [
+      4096,
+      3072
+    ],
+    "bytes": 18951577,
+    "finite": true,
+    "min": 0,
+    "max": 255
+  },
+  "output": {
+    "path": "D:\\MyProjects\\CSIG\\baseline\\experiments\\final_test_inference\\dry_run\\output\\case1.jpg",
+    "mode": "RGB",
+    "size": [
+      4096,
+      3072
+    ],
+    "bytes": 3035137,
+    "finite": true,
+    "min": 0,
+    "max": 255
+  },
+  "lq_mode": "RGB",
+  "prompt": "",
+  "fusion": {
+    "min_weight": 0.05000000074505806,
+    "max_weight": 0.43703535199165344,
+    "mean_weight": 0.15204010903835297
+  },
+  "config": {
+    "method": "texture_selective_h200",
+    "model_t": 200,
+    "coeff_t": 200,
+    "upscale": 1,
+    "seed": 231,
+    "captioner": "empty",
+    "lora_rank": 256,
+    "lora_modules": "to_k,to_q,to_v,to_out.0,conv,conv1,conv2,conv_shortcut,conv_out,proj_in,proj_out,ff.net.2,ff.net.0.proj",
+    "patch_size": 512,
+    "stride": 256,
+    "scale_by": "factor",
+    "base_model_type": "sd2",
+    "max_weight": 0.6
+  },
+  "status": "DRY_RUN_OK"
+}

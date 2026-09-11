@@ -231,3 +231,36 @@
 - Average PSNR/SSIM/LPIPS_1024: LQ 28.034/0.778/0.204; H50 28.258/0.777/0.162; H200 24.529/0.685/0.160; fusion_A **28.460/0.782/0.189**; fusion_B 28.256/0.779/0.156; texture_selective 28.480/0.781/0.165.
 - Visual: Fusion does not detect/delete the fish head; plant α=0.08 attenuates the H200 residual so the eye/contour collapse back to a pink blur. Sobel mask suppresses new strong edges (serrated leaves) but not smooth-region semantics. Case3 water grain fades for the same reason (bird α=0.12). Text/clock structure held.
 - Did not beat the texture_selective +0.05 dB gate. Report: `baseline/experiments/hypir_fusion_v1/results/fusion_v1/report.md`.
+
+## 2026-09-11 — HYPIR fusion v2 residual confidence (F1)
+- Do not overwrite fusion_v1. New package: `baseline/experiments/hypir_fusion_v2/`.
+- Keep scene alpha, YCbCr (Cb/Cr locked to LQ), H50/H200 bases, metrics CSV, visualization.
+- Mask groups: A = original fusion_v1 (`M_struct`); B = `M_struct` (same formula as A); C = `M_struct * conf`; D = `M_struct * conf^2`; extra gamma=0.5 as requested.
+- `conf = 1 - percentile_norm(GaussianBlur(mean_c |H200-LQ|, σ=8), 1–99)`.
+- Scope: validation case1–case5 only. No HYPIR inference, training, LoRA, classifier, or depth model.
+- 8 unit tests + 10 v1 tests pass. fusion_A PSNR 28.460407 matches v1 exactly. HYPIR git: only untracked `models/` and `weights/`.
+- Average PSNR: A/B fusion_A 28.460; C fusion_A_conf 28.198; D fusion_A_conf2 28.109; best F1 is fusion_B_conf2 28.368. Anchor texture_selective 28.480. Did not beat 28.48.
+- Visual: fish-head conf map goes dark inside the head, but A/C/D outputs stay the same pink blur (α=0.08). Water conf≈0.91 so F1 does not target ripples. Text/clock not redrawn; C/D softer than A.
+- Report: `baseline/experiments/hypir_fusion_v2/results/fusion_v2/report.md`. Stop stacking output-space masks.
+
+## 2026-09-11 — HYPIR process-level control audit
+- Do not stack masks. Do not retrain. Do not re-run completed coeff_t/model_t inference.
+- First: read `HYPIR/HYPIR/enhancer/sd2.py` `forward_generator` and `DDPMScheduler.step`.
+- Code fact: inference is a single UNet epsilon pass + `pred_original_sample`. No sampling loop, no CFG, no noise injection.
+- 8 unit tests pass. Offline eval reused coeff_t_50/75/100/150/200 PNGs. `ran_inference=False`.
+- Average PSNR: t50 28.258, t75 27.958, t100 27.505, t150 26.213, t200 24.529. Anchor 28.480. fusion_v1_A 28.460. None beat the anchor.
+- Visual: fish-head develops with coeff_t (eye at 75, full head at 200). Wrong catkin/burr at yellow-flower crop. Water grain increases with t.
+- Decision: stop process control; LoRA/Adapter is the next stage if authorized. Report written.
+
+## 2026-09-11 — LoRA feasibility audit
+- No training, no download, no HYPIR edits.
+- Inventory: CSIG val 5 paired 4K, test 100 LQ-only, no parquet/LSDIR/DF2K on disk.
+- Loader is GT → RealESRGAN synthetic LQ (`stage2_scale: 4`). Official trainer gaussian-inits LoRA, does not load `HYPIR_sd2.pth`.
+- Decision: **NO-GO LoRA**. Keep `texture_selective_h200`.
+- Write-up: `baseline/experiments/hypir_lora_feasibility_audit/`.
+
+## 2026-09-11 — fusion_v3 multi-band
+- Laplacian L0 high / L1+L2 mid / G3 low. Y only, LQ chroma. 6 unit tests pass. No HYPIR edits.
+- Average PSNR: B 26.604, C 26.579, D01 26.493, D02 26.389 vs texture 28.480.
+- Case4 fish: high band contains eye and scales. Fusion still a fish head.
+- **NO-GO multi-band.** Freeze texture_selective_h200. Stop output-space work.

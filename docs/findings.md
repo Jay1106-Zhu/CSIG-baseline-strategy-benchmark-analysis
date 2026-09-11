@@ -17,6 +17,10 @@
 - HYPIR-200 是确定性映射（四 seed 两两 PSNR 39.5–39.9 dB）。case4 主因是中频错误植物（E1 高需求 A=7/8），不是合理叶脉重采样，也不是抽样方差。
 - 全图融合 α=0.2 均 PSNR 28.45，打平但赢不了 `texture_selective` 28.48。
 - **hypir_fusion_v1（2026-09-10）：** 方案 A 均 PSNR 28.46 / SSIM 0.782 / LPIPS_1024 0.189。Fusion 不是识别并删除鱼头，而是降低 H200 残差权重，把高置信度生成压回模糊。Sobel mask 能压新强边缘，压不了平滑区语义。未过锚点 +0.05 dB。V1.1：`M_final = structure_mask × residual_penalty`（大残差本身不够，否则文字也会被杀）。
+- **fusion_v3 multi-band（2026-09-11，NO-GO）：** Laplacian 三带，Y 融合、Cb/Cr 锁 LQ。最好 multi_B PSNR 26.604 < 锚 28.480。鱼头 crop |H200−LQ| mid=8.46 high=7.27；H200_high 含眼睛和鳞片。错误不在单一中频。冻结 texture_selective_h200。
+- **LoRA feasibility（2026-09-11，NO-GO）：** 磁盘上无 LSDIR/DF2K/parquet。唯一配对是验证集 5 对（同尺寸 RGB，filename 对齐）；测试 100 张无 GT。`RealESRGANDataset` 只读 GT，batch_transform 在线 4× 退化。`SD2Trainer` 高斯初始化新 LoRA，不加载 `HYPIR_sd2.pth`。官方 LoRA rank 256、259.47M、含 conv 不只 attn。与 CSIG 同分辨率 + 错误植物 prior 不匹配。不训练。
+- **过程级控制 v1（2026-09-11，到上限）：** 推理是单步 x0，不是 sampler。唯一真实强度旋钮是 `coeff_t`（eps 尺度 50=0.226 … 200=0.572）。五档均 PSNR 28.26/27.96/27.50/26.21/24.53，全部低于锚 28.48。Case4 鱼头随 t 增大被画实，t=50 只是没画完的鱼头，不是正确复叶。比 α fusion 更差。结论：暂停过程控制进入 LoRA/Adapter。报告：`baseline/experiments/hypir_process_control_v1/results/process_control_v1/report.md`。
+- **hypir_fusion_v2 / F1（2026-09-11，未过门槛）：** `M_final = M_struct * conf^gamma`。A/B=`M_struct` 方案 A **28.460**（与 v1 逐位一致）。C 方案 A **28.198**。D 方案 A **28.109**。方案 B+conf 最高 **28.368**。锚 28.480。置信图能暗鱼头内部，但 plant α=0.08 已把输出压成粉团；水面 conf≈0.91。文字/钟表被大残差误伤。未恢复真实绿植。结论：当前瓶颈不是结构 mask，而是 H200 输出本身与 LQ 信息差异过大，需要进一步降低生成强度。报告：`baseline/experiments/hypir_fusion_v2/results/fusion_v2/report.md`。
 - 分块（非重叠 256，960 块）：case3 块均值 ΔPSNR −8.93（平坦水面被造纹理）；case4 三层 ΔPSNR 几乎一样（约 −1.6 dB）且块 LPIPS 更好。块 LPIPS ≠ 全图 1024 LPIPS。
 - 不建议在模糊区加强生成。文字/钟表优先少改；绿植要压错误中频和大残差幻觉，不是追 GT 叶脉。
 

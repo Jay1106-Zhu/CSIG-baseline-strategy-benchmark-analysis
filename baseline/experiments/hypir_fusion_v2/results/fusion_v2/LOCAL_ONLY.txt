@@ -1,0 +1,1 @@
+Not uploaded: 4K fusion/mask/heatmap/band PNGs. Code, metrics, comparison panels, and crops are in git.

@@ -2,11 +2,26 @@
 
 赛道一：同分辨率 4K 图像增强（Diffusion）。验证集 5 对 LQ/GT；测试集 100 张无 GT。
 
-**一眼看懂：** HYPIR-200 更清晰，但 PSNR 全面掉。诊断结论是 **确定性错误中频映射**（错叶型、锁死鱼头），不是随机抽样，也不是「模糊处该加强生成」。当前提交锚是 `texture_selective_h200`（均 PSNR **28.48**）。output-space fusion v1 均 PSNR 28.46：不是识别删除鱼头，而是降权把生成压回模糊。下一件是 `structure_mask × residual_penalty`，不是单独残差，也不是旧 DAS blur-up Adapter。
+**一眼看懂：** HYPIR-200 更清晰，但 PSNR 全面掉。诊断结论是 **确定性错误中频映射**（错叶型、锁死鱼头），不是随机抽样。当前提交锚 **冻结** `texture_selective_h200`（均 PSNR **28.48**）。F1 / process control / LoRA / multi-band 全部 NO-GO。100 张 test **全部**用 texture_selective_h200，不按类别 routing。
 
 ---
 
-## 当前结论（2026-09-09 / 10）
+## 当前结论（2026-09-11）
+
+| 阶段 | 结果 |
+|---|---|
+| fusion_v1 | 28.46，不是识别删除鱼头 |
+| fusion_v2 F1 residual conf | 方案 A 28.20 / 28.11，未过锚 |
+| process control `coeff_t` | 只在 H50↔H200 滑动，最好 28.26 |
+| LoRA feasibility | **NO-GO**（无配对训练数据） |
+| fusion_v3 multi-band | **NO-GO**（鱼头进入高频，最好 26.60） |
+| 最终策略 | 100 张全部 `texture_selective_h200`；dry-run case1 已过 |
+
+完整计划：[`docs/CURRENT_PLAN.md`](docs/CURRENT_PLAN.md)  
+跑图封装：[`baseline/experiments/final_test_inference/`](baseline/experiments/final_test_inference/)  
+策略审计：[`baseline/experiments/final_strategy_audit/`](baseline/experiments/final_strategy_audit/)
+
+## 此前结论（2026-09-09 / 10）
 
 | 事实 | 证据 |
 |---|---|
@@ -61,10 +76,16 @@ fusion v1：[`hypir_fusion_v1/`](baseline/experiments/hypir_fusion_v1/)（`fusio
 
 ```
 README.md                          本文件
-docs/CURRENT_PLAN.md               现行比赛计划（下一件：Exp-F1）
+docs/CURRENT_PLAN.md               现行比赛计划（锚已冻结）
 docs/赛题.txt                      赛题原文
-baseline/experiments/error_decomposition_v1/   E1–E4 诊断（代码+CSV+精选图）
-baseline/experiments/hypir_fusion_v1/          输出空间融合（代码+指标+拼图+crops）
+baseline/experiments/error_decomposition_v1/   E1–E4 诊断
+baseline/experiments/hypir_fusion_v1/          输出空间融合 v1
+baseline/experiments/hypir_fusion_v2/          F1 residual confidence（NO-GO）
+baseline/experiments/hypir_process_control_v1/ coeff_t 过程控制裁决
+baseline/experiments/hypir_lora_feasibility_audit/  LoRA NO-GO
+baseline/experiments/hypir_fusion_v3/          Laplacian multi-band（NO-GO）
+baseline/experiments/final_strategy_audit/     跑图前策略
+baseline/experiments/final_test_inference/     100 张封装（dry-run 已过）
 baseline/                          更早的 HYPIR 实验、指标、三联图
 baseline_bakeoff/                  DiffIR 对照
 csig_dataset/验证集/               5 对 LQ/GT

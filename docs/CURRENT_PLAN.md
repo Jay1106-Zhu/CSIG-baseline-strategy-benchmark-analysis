@@ -78,7 +78,21 @@ CSV：`error_decomposition_v1/patch_metrics_full.csv`、`patch_metrics_summary.c
 
 ## Highest priority experiments
 
-**只有 1 个尚未做、必须做的实验。** 全局融合已经做过。
+**输出空间 H200 融合已经做完（F0、fusion_v1、F1），全部未过 28.48+0.05。** 不要再叠 mask。
+
+**过程级控制也已经做完。** `coeff_t` 是唯一真实强度旋钮（单步 x0 尺度）。50/75/100/150/200 均 PSNR 全部低于 28.48。鱼头随 t 被画实，不是被纠正。
+
+**LoRA feasibility（2026-09-11）：NO-GO。** 仓库没有可训配对；官方 pipeline 是 GT→4× Real-ESRGAN 合成 LQ，且不加载 `HYPIR_sd2.pth`。保持锚 `texture_selective_h200`。详见 `baseline/experiments/hypir_lora_feasibility_audit/go_no_go.md`。
+
+**fusion_v3 multi-band（2026-09-11）：NO-GO。** 鱼头眼睛/鳞片在 H200 高频；B/C/D 均 PSNR 26.39–26.60，低于锚 28.48。冻结 `texture_selective_h200`，停止 output-space 微调。
+
+**最终跑图策略（审计，未跑 100 张）：** 方案 U，全部 test 用 `texture_selective_h200`。测试集无类别标注；`scenario_routing_v1` 已失败（25.80）。fusion_v1 的 case→scene 表不能用测试文件名。详见 `baseline/experiments/final_strategy_audit/README.md`。
+
+### hypir_process_control_v1（2026-09-11，已跑，到上限）
+
+产物：`baseline/experiments/hypir_process_control_v1/results/process_control_v1/report.md`。
+
+未重跑 HYPIR。复用 `coeff_t_*` PNG，LPIPS_1024 与 fusion 对齐。结论：暂停过程控制进入 LoRA/Adapter。
 
 ### Exp-F0（已完成，禁止重跑）
 
@@ -105,43 +119,27 @@ CSV：`error_decomposition_v1/patch_metrics_full.csv`、`patch_metrics_summary.c
 
 结果：`baseline/experiments/hypir_fusion_v1/results/fusion_v1/report.md`。fusion_A 均 PSNR **28.46**（锚 28.48，门槛 28.53）。Fusion 不是识别并删除鱼头，而是降低 H200 权重把生成压回模糊；Sobel mask 只切新强边缘。F1 不要单独用大残差当坏（会杀文字），应用 `structure_mask × residual_penalty`。
 
-### Exp-F1（下一件唯一的新实验）
+### Exp-F1（2026-09-11，已跑，未过门槛，禁止重跑）
 
-**残差置信融合（不用 blur map）。**
+用户指定实现：`M_final = M_struct * conf^gamma`，`conf = 1 - percentile_norm(|H200−LQ|)`，保留 v1 的 scene α / YCbCr / 双底板。不是 CURRENT_PLAN 里更早的全局 α(x) 配方。
 
-原因：E1 显示大改动区域就是 A/D；\(|H200-LQ|\) 是最便宜的「这里不可信」信号。Blur 大 ≠ 该生成。
+产物：`baseline/experiments/hypir_fusion_v2/results/fusion_v2/report.md`。
 
-最小实现（离线，复用现有 PNG，不跑 HYPIR）：
+| 组 | 公式 | 方案 A PSNR | 方案 B PSNR |
+|---|---|---:|---:|
+| A/B | `M_struct`（原 v1） | **28.460** | 28.256 |
+| C | `M_struct * conf` | 28.198 | 28.366 |
+| D | `M_struct * conf^2` | 28.109 | 28.368 |
+| extra | `M_struct * conf^0.5` | 28.281 | 28.350 |
+| 锚 | texture_selective | **28.480** | — |
 
-```text
-R(x) = mean_c |H200 - LQ|          # [0,255]
-R     = GaussianBlur(R, σ=8)
-R     = percentile_norm(R, 1–99)
-conf  = 1 - R                      # 残差大 → 不信 H200
-α(x)  = α_min + (α_max-α_min)*conf
-I     = (1-α) LQ + α H200
-```
+门槛 28.53。未过。方案 A 随 gamma 单调掉向 LQ；方案 B+conf 相对 fusion_B 最多 +0.11 dB。置信图能在鱼头内部变暗，但 plant α=0.08 已把输出压成粉团；水面 conf≈0.91，假波纹不是大残差。文字/钟表因大残差被 conf 误伤。
 
-固定两档，禁止按 case 调：
+**若 F1 失败（已发生）：** 用「H200 改了多少」当置信仍选不出可保留的 H200 区域 → **停止一切 H200 空间融合**，提交锚点方法。
 
-- F1a：`α_min=0.00, α_max=0.30`
-- F1b：`α_min=0.05, α_max=0.25`（贴近全局 0.2 的空间版）
+当前瓶颈不是结构 mask，而是 H200 输出本身与 LQ 信息差异过大，需要进一步降低生成强度。
 
-可选 F1c（仅当 F1a/b 有正信号）：再乘 `edge_agree = clip(cos(∇H200, ∇LQ), 0, 1)`。  
-第一版 **不做 reblur**（没有 \(D\)）。
-
-**门槛（必须同时）：**
-
-- 均 PSNR ≥ texture_selective **+0.05 dB**（28.53）
-- SSIM 不掉 > 0.001
-- LPIPS_1024 不差于 texture_selective 0.003 以上
-- case1/2/5 无新的文字/指针灾难
-- case4 `mid04` 鱼头必须被压掉（目视）
-
-**若 F1 失败：** 说明用「H200 改了多少」当置信仍选不出可保留的 H200 区域 → **停止一切 H200 空间融合**，提交锚点方法。  
-**若 F1 成功：** 说明伤害集中在大残差区，H200 的感知收益可以空间上留下来。
-
-### Exp-F2（仅 F1 通过后）
+### Exp-F2（仅 F1 通过后；F1 已失败，不要做）
 
 同一套 conf，把 LQ 换成 H50：
 
@@ -157,10 +155,10 @@ I = (1-α) H50 + α H200
 
 **主候选（按序，后者替换前者）：**
 
-1. **提交锚：** `texture_selective_h200`（或全局 α=0.2，二者几乎打平，先用已有锚）。
-2. **若 F1 过门槛：** residual-confidence fusion（H200 只在低残差处留下）。
-3. **若 F1+F2 过门槛：** H50 作保真底、H200 作受限纹理。
-4. **Adapter 不进主路径。** 只有 F1 成功且仍有 ≥2 天，才允许一个 **反向 DAS**：在大残差处把 H200 **拉回** LQ/H50，而不是加强生成。禁止 blur-up Adapter。
+1. **提交锚（F1 未替换）：** `texture_selective_h200`（或全局 α=0.2，二者几乎打平，先用已有锚）。
+2. **F1 未过门槛：** 不要用 residual-confidence fusion 换锚。
+3. **F2 不做。**
+4. **Adapter 不进主路径。** F1 无正信号，不准开训。禁止 blur-up Adapter。
 
 **H50+SwinIR** 仅作 PSNR 参考。赛题要求 Diffusion；主提交必须 HYPIR 在环路上。SwinIR 融合最多当备份 zip，不作为故事主线。
 
@@ -200,33 +198,28 @@ Discarded directions（本文上表，不再做）
         ↓
 Exp-F0 已完成：全局融合打平锚、赢不了
         ↓
-Exp-F1  residual-confidence fusion     ← 现在唯一要做的
+Exp-F1  residual-confidence fusion     ← 已跑，未过 28.48
         ↓
         失败 → 冻结 texture_selective / α=0.2，进入提交工程
         成功 → Exp-F2（H50 底板）
         ↓
-        仍有时间且 F1 有空间收益 → 反向 Adapter（可选，可跳过）
-        ↓
 冻结一个方法 → 100 张 test → zip
 ```
 
-| 阶段 | 输入 | 改哪里 | 预期 | 风险 |
+| 阶段 | 输入 | 改哪里 | 预期 | 实际 |
 |---|---|---|---|---|
-| F1 | 现成 LQ/H200 PNG | 只改像素融合，不改 HYPIR | case4 鱼头消失；均 PSNR ≥28.53 | 大残差全图都大 → 退回 LQ，PSNR 不涨 |
-| F2 | 现成 H50/H200 | 同上，底板换 H50 | 比 F1 再涨一点 | 与 texture_selective 重复 |
-| 提交 | 冻结方法 | 推理+命名+jpg | 可交 | 过早跑 100 张 |
-
-F1 预期工作量：半天写脚本 + 五张指标 + 目视 case4 `mid04`/`high02`。
+| F1 | 现成 LQ/H200 PNG | 只改像素融合，不改 HYPIR | case4 鱼头消失；均 PSNR ≥28.53 | 方案 A 28.46→28.20→28.11；未过锚。鱼头变暗但未变真叶 |
+| F2 | 现成 H50/H200 | 同上，底板换 H50 | 比 F1 再涨一点 | **不要做**（F1 失败） |
+| 提交 | 冻结方法 | 推理+命名+jpg | 可交 | 主提交仍是 texture_selective |
 
 ---
 
 ## Competition submission plan
 
-1. **现在：** 实现 F1a/F1b，和 `texture_selective_h200`、全局 α=0.2、H50、LQ 同一口径比。
-2. **F1 不过：** 主提交 = `texture_selective_h200`（或 α=0.2，选五张均 PSNR 更高者）。不再开新方法。
-3. **F1 过：** 主提交 = F1（或 F2）。答辩故事：HYPIR 提供感知锐度；用残差置信抑制确定性中频错误和幻觉。
-4. **100 张：** 只跑冻结的那一套。输出 `output_dir/case{k}.jpg`。
-5. **决赛 PPT：** 用 E1 的 A=7/8、E4 的鱼头四 seed 不变、F1 把鱼压掉（若发生）作为可控性证据。不要讲 blur-up Adapter。
+1. **现在：** F1 已跑且不过门槛。停止 H200 空间融合。
+2. **F1 不过（已发生）：** 主提交 = `texture_selective_h200`（或 α=0.2，选五张均 PSNR 更高者）。不再开新 mask。
+3. **100 张：** 只跑冻结的那一套。输出 `output_dir/case{k}.jpg`。
+4. **决赛 PPT：** 用 E1 的 A=7/8、E4 的鱼头四 seed 不变、fusion 把生成压回模糊（不是检测删除）作为可控性证据。不要讲 blur-up Adapter，也不要讲 F1 过了门槛。
 
 ---
 
