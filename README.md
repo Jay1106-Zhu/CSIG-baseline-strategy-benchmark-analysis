@@ -113,9 +113,9 @@ tests/                             契约测试
 
 ## 下一步（不要再扩大研究）
 
-1. **Exp-F1**：残差置信融合 \(I=(1-\alpha(x))LQ+\alpha(x)H200\)，\(\alpha\) 由 \(|H200-LQ|\) 决定（残差大 → 不信 H200）。不用 blur map。
-2. 不过门槛 → 提交 `texture_selective_h200`。
-3. 禁止：更多 seed、blur-up Adapter、未冻结就跑 100 张。
+1. **已冻结：** 100 张 test 全部 `texture_selective_h200`（`upscale=1`，`coeff_t=200`，空 prompt）。
+2. dry-run case1 已过。正式 100 张等确认后再跑：`run_final_test.py --mode full --confirm-full`。
+3. 禁止：F1/mask/coeff/LoRA/multi-band、分类 routing、未确认就跑 100 张。
 
 ---
 
